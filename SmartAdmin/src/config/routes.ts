@@ -43,6 +43,10 @@ export var routes: Types.RouteList = {
         url: 'company/explorer'
     },
 
+    '/profile': {
+        url: 'company/explorer'
+    },
+
     '*': {
         url: 'home/testview'
     },

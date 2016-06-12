@@ -161,8 +161,6 @@ export module Views {
             this.init_datalinks();
             
             this.resolve_subview();
-
-            this.highlight_active_menu();
         }
 
 
@@ -188,12 +186,6 @@ export module Views {
                     }
                 }
             }
-        }
-
-
-
-        highlight_active_menu() {
-
         }
 
 

@@ -702,7 +702,7 @@ var calc_navbar_height = function() {
 
 			        case 'activate':
 			            {
-			                if ($(this).parent().find("ul").size() !== 0) {
+			                if ($(this).closest("ul").size() !== 0) {
 
 			                    if (opts.accordion) {
 			                        //Do nothing when the list is open

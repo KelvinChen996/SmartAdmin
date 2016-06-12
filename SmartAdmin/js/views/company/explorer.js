@@ -38,6 +38,9 @@ define(["require", "exports", 'react', 'react-dom', './comp_org', '../../lib/jx'
                 var subview = this.app.router.params.subview;
                 if (!this.subroute_exists(subview)) {
                     switch (this.app.router.ctx.path) {
+                        case '/profile':
+                            ReactDOM.render(React.createElement(org.CompOrg, null), this.page_content[0]);
+                            break;
                         case '/org':
                             ReactDOM.render(React.createElement(org.CompOrg, null), this.page_content[0]);
                             break;
@@ -50,10 +53,20 @@ define(["require", "exports", 'react', 'react-dom', './comp_org', '../../lib/jx'
             this.highlight_active_menu();
         };
         Explorer.prototype.highlight_active_menu = function () {
-            //$('#side-menu > li').removeClass('active');
-            //$('#side-menu > li').removeClass('open');
+            $('#side-menu li').removeClass('active');
+            $('#side-menu li').removeClass('open');
+            $('#side-menu li').find("b:first").html('<em class="fa fa-plus-square-o"></em>');
+            $('#side-menu li').removeClass("open");
+            $('#side-menu').find("ul:first").slideUp(235, function () {
+                $(this).parent("li").removeClass("open");
+                $(this).parent("li").find("b:first").delay(235).html('<em class="fa fa-plus-square-o"></em>');
+            });
             var a = $('[href="{0}"]'.format(this.app.router.ctx.path));
-            $(a)['jarvismenu']('activate');
+            $(a).closest('.menu').addClass('active');
+            $(a).closest("ul").slideDown(235, function () {
+                $(a).parent("li").addClass("open");
+                $(a).closest('.menu').find("b:first").delay(235).html('<em class="fa fa-minus-square-o"></em>');
+            });
         };
         Explorer.prototype.activate_menu = function (a) {
         };

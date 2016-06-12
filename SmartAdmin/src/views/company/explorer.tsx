@@ -60,6 +60,12 @@ class Explorer extends Views.MasterPage {
 
                 switch (this.app.router.ctx.path) {
 
+                    case '/profile':
+
+                        ReactDOM.render(<org.CompOrg />, this.page_content[0]);
+
+                        break;
+
                     case '/org':
 
                         ReactDOM.render(<org.CompOrg />, this.page_content[0]);
@@ -82,12 +88,28 @@ class Explorer extends Views.MasterPage {
 
     highlight_active_menu() {
 
-        //$('#side-menu > li').removeClass('active');
-        //$('#side-menu > li').removeClass('open');
+        $('#side-menu li').removeClass('active');
+        $('#side-menu li').removeClass('open');
+
+        $('#side-menu li').find("b:first").html('<em class="fa fa-plus-square-o"></em>');
+        $('#side-menu li').removeClass("open");
+
+        $('#side-menu').find("ul:first").slideUp(235, function () {
+            $(this).parent("li").removeClass("open");
+            $(this).parent("li").find("b:first").delay(235).html('<em class="fa fa-plus-square-o"></em>');
+        });
 
         var a = $('[href="{0}"]'.format(this.app.router.ctx.path));
 
-        $(a)['jarvismenu']('activate');
+        $(a).closest('.menu').addClass('active');
+
+        $(a).closest("ul").slideDown(235, function () {
+            
+            $(a).parent("li").addClass("open");
+            $(a).closest('.menu').find("b:first").delay(235).html('<em class="fa fa-minus-square-o"></em>');
+            
+        });
+        
     }
 
 

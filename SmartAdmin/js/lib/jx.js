@@ -87,7 +87,6 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
             MasterPage.prototype.init_page = function () {
                 this.init_datalinks();
                 this.resolve_subview();
-                this.highlight_active_menu();
             };
             MasterPage.prototype.resolve_subview = function () {
                 if (this.app.router.params) {
@@ -103,8 +102,6 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
                         }
                     }
                 }
-            };
-            MasterPage.prototype.highlight_active_menu = function () {
             };
             MasterPage.prototype.get_internal_routes = function () {
                 return {};

@@ -31,6 +31,9 @@ define(["require", "exports"], function (require, exports) {
         '/org': {
             url: 'company/explorer'
         },
+        '/profile': {
+            url: 'company/explorer'
+        },
         '*': {
             url: 'home/testview'
         },
