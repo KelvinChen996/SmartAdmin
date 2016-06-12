@@ -161,6 +161,8 @@ export module Views {
             this.init_datalinks();
             
             this.resolve_subview();
+
+            this.highlight_active_menu();
         }
 
 
@@ -186,6 +188,12 @@ export module Views {
                     }
                 }
             }
+        }
+
+
+
+        highlight_active_menu() {
+
         }
 
 
@@ -261,6 +269,7 @@ export module Application {
 
         params: any;
         routes: any;
+        ctx: any;
 
         init_routes(routes: any) {
 
@@ -278,7 +287,7 @@ export module Application {
 
                 page(url, ctx => {
 
-                    this['ctx'] = ctx;
+                    this.ctx = ctx;
 
                     this.params = ctx.params;
 

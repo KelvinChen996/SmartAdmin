@@ -39,6 +39,10 @@ export var routes: Types.RouteList = {
         url: 'company/explorer'
     },
 
+    '/org': {
+        url: 'company/explorer'
+    },
+
     '*': {
         url: 'home/testview'
     },

@@ -28,6 +28,9 @@ define(["require", "exports"], function (require, exports) {
         '/company/:subview': {
             url: 'company/explorer'
         },
+        '/org': {
+            url: 'company/explorer'
+        },
         '*': {
             url: 'home/testview'
         },

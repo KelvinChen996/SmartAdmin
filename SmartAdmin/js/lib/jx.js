@@ -87,6 +87,7 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
             MasterPage.prototype.init_page = function () {
                 this.init_datalinks();
                 this.resolve_subview();
+                this.highlight_active_menu();
             };
             MasterPage.prototype.resolve_subview = function () {
                 if (this.app.router.params) {
@@ -102,6 +103,8 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
                         }
                     }
                 }
+            };
+            MasterPage.prototype.highlight_active_menu = function () {
             };
             MasterPage.prototype.get_internal_routes = function () {
                 return {};
@@ -160,7 +163,7 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
                     var url = key;
                     var view_url = route['url'];
                     page(url, function (ctx) {
-                        _this['ctx'] = ctx;
+                        _this.ctx = ctx;
                         _this.params = ctx.params;
                         var path = '..' + utils.Path.join('/views', view_url);
                         require([path], function (mod) {
