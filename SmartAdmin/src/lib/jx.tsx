@@ -415,3 +415,94 @@ export module Application {
     }
 
 }
+
+
+
+export module controls {
+
+
+    export interface BlackBloxProps extends Views.ReactProps {
+        icon?:any,
+        title?: string
+    }
+    export class BlackBlox extends Views.ReactView {
+
+        props: BlackBloxProps;
+
+        render() {
+
+            var html =
+                <div className="jarviswidget jarviswidget-color-white" data-widget-attstyle="jarviswidget-color-white" data-widget-editbutton="false">
+
+                    <header>
+                        <span className="widget-icon"> {this.props.icon} </span>
+                        <h2>{this.props.title}</h2>
+                    </header>
+
+                    <div style={{ paddingBottom:20 }}>
+                        <div className="jarviswidget-editbox">                            
+                        </div>
+
+                        <div className="widget-body no-padding">
+                            <div className="col-lg-12">
+                                {this.props.children}
+                            </div>                            
+                        </div>
+
+                    </div>
+
+                </div>
+            
+            return html;
+
+        }
+
+    }
+
+
+
+
+    export interface BigLabelProps extends Views.ReactProps {
+        label?: string,
+        lang?: string,
+        require?: boolean
+    }
+    export class BigLabel extends Views.ReactView {
+
+        props: BigLabelProps;
+
+
+        constructor(props: BigLabelProps) {
+            super(props);
+        }
+
+
+        render() {
+
+            var html = <div className="breadcrumb-wrapper">
+                <p className="label-value" style={{ fontSize: 32, fontWeight: 100 }}>{this.format_label() }{this.is_required() }</p>
+            </div>;
+
+            return html;
+        }
+
+        format_label(): any {
+
+            if (this.props.lang) {
+                return <span data-localize={this.props.lang}>this.props.label</span>
+            } else {
+                return this.props.label;
+            }
+        }
+
+
+        is_required() {
+
+            if (this.props.require) {
+                return <span className="required">*</span>
+            }
+        }
+        
+    }
+
+}

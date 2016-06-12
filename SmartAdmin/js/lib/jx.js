@@ -250,5 +250,45 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
         }
         Application.InitApplication = InitApplication;
     })(Application = exports.Application || (exports.Application = {}));
+    var controls;
+    (function (controls) {
+        var BlackBlox = (function (_super) {
+            __extends(BlackBlox, _super);
+            function BlackBlox() {
+                _super.apply(this, arguments);
+            }
+            BlackBlox.prototype.render = function () {
+                var html = React.createElement("div", {"className": "jarviswidget jarviswidget-color-white", "data-widget-attstyle": "jarviswidget-color-white", "data-widget-editbutton": "false"}, React.createElement("header", null, React.createElement("span", {"className": "widget-icon"}, " ", this.props.icon, " "), React.createElement("h2", null, this.props.title)), React.createElement("div", {"style": { paddingBottom: 20 }}, React.createElement("div", {"className": "jarviswidget-editbox"}), React.createElement("div", {"className": "widget-body no-padding"}, React.createElement("div", {"className": "col-lg-12"}, this.props.children))));
+                return html;
+            };
+            return BlackBlox;
+        })(Views.ReactView);
+        controls.BlackBlox = BlackBlox;
+        var BigLabel = (function (_super) {
+            __extends(BigLabel, _super);
+            function BigLabel(props) {
+                _super.call(this, props);
+            }
+            BigLabel.prototype.render = function () {
+                var html = React.createElement("div", {"className": "breadcrumb-wrapper"}, React.createElement("p", {"className": "label-value", "style": { fontSize: 32, fontWeight: 100 }}, this.format_label(), this.is_required()));
+                return html;
+            };
+            BigLabel.prototype.format_label = function () {
+                if (this.props.lang) {
+                    return React.createElement("span", {"data-localize": this.props.lang}, "this.props.label");
+                }
+                else {
+                    return this.props.label;
+                }
+            };
+            BigLabel.prototype.is_required = function () {
+                if (this.props.require) {
+                    return React.createElement("span", {"className": "required"}, "*");
+                }
+            };
+            return BigLabel;
+        })(Views.ReactView);
+        controls.BigLabel = BigLabel;
+    })(controls = exports.controls || (exports.controls = {}));
 });
 //# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/lib/jx.js.map

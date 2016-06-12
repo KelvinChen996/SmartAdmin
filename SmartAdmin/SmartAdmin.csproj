@@ -601,6 +601,7 @@
     <TypeScriptCompile Include="src\config\start.tsx" />
     <TypeScriptCompile Include="src\lib\jx.tsx" />
     <TypeScriptCompile Include="src\lib\utils.ts" />
+    <TypeScriptCompile Include="src\views\company\comp_divs.tsx" />
     <TypeScriptCompile Include="src\views\company\comp_org.tsx" />
     <TypeScriptCompile Include="src\views\company\explorer.tsx" />
     <TypeScriptCompile Include="src\views\home\homepage.tsx" />
