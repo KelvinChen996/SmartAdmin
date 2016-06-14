@@ -29,7 +29,7 @@ export class CompOrg extends Views.ReactView {
 
                 <br />
 
-                <div className="col-lg-4" style={{ paddingLeft: 0 }}>
+                <div className="col-lg-6" style={{ paddingLeft: 0 }}>
                     
                     <jx.controls.BlackBlox title="Divisions" icon={<i className="fa fa-cubes"></i>} >
 
@@ -41,7 +41,7 @@ export class CompOrg extends Views.ReactView {
 
                 </div>
 
-                <div className="col-lg-5">
+                <div className="col-lg-6">
                     {this.display_editForm()}
                 </div>
 
