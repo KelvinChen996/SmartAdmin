@@ -1,4 +1,5 @@
 ﻿/// <reference path="comp_divs.tsx" />
+/// <reference path="comp_dept.tsx" />
 // A '.tsx' file enables JSX support in the TypeScript compiler, 
 // for more information see the following page on the TypeScript wiki:
 // https://github.com/Microsoft/TypeScript/wiki/JSX
@@ -8,14 +9,16 @@ import React = require('react');
 import ReactDOM = require('react-dom');
 import jx = require('../../lib/jx');
 import divs = require('./comp_divs');
+import deps = require('./comp_dept');
+
 
 import { Views, Types } from '../../lib/jx';
 
 
 
+export enum EntryMode { none, add_div, edit_div, add_dep, edit_dep }
 interface CompOrgState extends Views.ReactState {
-    addNew?: boolean,
-    editDiv?: boolean,
+    entrymode?: EntryMode,
     divID?: string
 }
 export class CompOrg extends Views.ReactView {
@@ -44,44 +47,55 @@ export class CompOrg extends Views.ReactView {
                 </div>
 
                 <div className="col-lg-6">
-                    {this.display_editForm()}
+                    <div className="col-lg-12 edit-div" style={{ padding:0 }}>
+                        {this.display_DivEntrView() }
+                    </div>
+                    <div className="edit-dep" style={{ padding: 0 }}>
+                        
+                    </div>
+                    
                 </div>
 
             </div>;
 
         return html;
     }    
-
-
-    componentDidMount() {
-
-        this.state.addNew = false;
-    }
-
-
+    
+    
     notify(cmd: string, data?: any): Q.Promise<any> {
+        
+        ReactDOM.unmountComponentAtNode(this.root.find('.edit-dep')[0]);
 
         switch (cmd) {
 
             case 'add-new-division': {
                 
                 this.setState({
-                    addNew: true
-                });
+                    entrymode: EntryMode.add_div
+                } as CompOrgState);
             } break;
 
             case 'edit-division': {
                 
                 this.setState({
-                    editDiv: true,
+                    entrymode: EntryMode.edit_div,
                     divID: data
-                });
+                } as CompOrgState);
             } break;
 
 
             case 'update_list': {
-
                 (this.refs["divs_comp"] as divs.CompDivs).update();
+            } break;
+
+
+            case 'add_depart': {
+
+                this.state.entrymode = EntryMode.add_dep;
+
+                ReactDOM.render(<deps.CompDepart />, this.root.find('.edit-dep')[0]);
+
+                $('.div-mode').addClass('hidden');
 
             } break;
         }
@@ -90,33 +104,38 @@ export class CompOrg extends Views.ReactView {
     }
         
 
-    display_editForm() {
+    display_DivEntrView() {
 
         var props: divs.CompDivsEditProps = {
             key: utils.guid(),
             owner:this        
         }
 
-        if (this.state.addNew) {
+        switch (this.state.entrymode) {
 
-            this.state.addNew = false;
+            //case EntrMode.add_dep: {
+            //    return <deps.CompDepart />
+            //}
 
-            props.mode = 'new';
-            
+            case EntryMode.add_div: {
+                props.mode = 'new';
+            } break;
+
+
+            case EntryMode.add_dep:
+            case EntryMode.edit_div: {
+                props.mode = 'edit';
+                props.id = this.state.divID;
+            } break;
         }
-
-
-        if (this.state.editDiv) {
-
-            this.state.editDiv = false;
-
-            props.mode = 'edit';
-            props.id = this.state.divID;
-            
-        }
-
+        
         if (props.mode) {            
             return <divs.CompDivsEdit  {...props} />
         }
+    }
+
+
+    add_new_depart() {
+
     }
 }

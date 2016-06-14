@@ -275,20 +275,26 @@ export class CompDivsEdit extends Views.ReactView {
                         <jx.controls.BigLabel label="Division title" />
                         <b.FormControl type="text" data-bind="textInput:compdiv_title" id="compdiv_title" placeholder="Enter a title" />
                     </b.FormGroup>
+
+                    <div className="div-mode">
+
+                        <b.FormGroup controlId="formControlsText">
+                            <jx.controls.BigLabel label="Division description" />
+                            <textarea rows={3} id="compdiv_descr" data-bind="textInput:compdiv_descr" className="custom-scroll form-control" />
+                        </b.FormGroup>
+
+                        <br />
+
+                        <button type="button" className="btn btn-info btn-add-dep" onClick={() => { this.add_dept(); } } style={{ marginLeft: 10 }}><i className="fa fa-plus"></i> {"Add department"}</button>
+                        <button type="button" className="btn btn-danger pull-right btn-cancel" onClick={() => { this.cancel(); } } style={{ marginLeft: 10 }}><i className="fa fa-times"></i> Cancel</button>
+                        <button type="button" className="btn btn-primary pull-right btn-save" onClick={() => { this.save(); } }><i className="fa fa-check"></i> Save</button>
+
+                        <br/>
+
+
+                    </div>
+
                     
-                    <b.FormGroup controlId="formControlsText">
-                        <jx.controls.BigLabel label="Division description" />                        
-                        <textarea rows={3} id="compdiv_descr" data-bind="textInput:compdiv_descr" className="custom-scroll form-control" />
-                    </b.FormGroup>
-
-                    <br />
-
-                    <button type="button" className="btn btn-info" style={{ marginLeft: 10 }}><i className="fa fa-plus"></i> {"Add department"}</button>
-                    <button type="button" className="btn btn-danger pull-right btn-cancel" onClick={() => { this.cancel(); } } style={{ marginLeft: 10 }}><i className="fa fa-times"></i> Cancel</button>
-                    <button type="button" className="btn btn-primary pull-right btn-save" onClick={() => { this.save(); } }><i className="fa fa-check"></i> Save</button>
-
-                    <br/>
-
                 </jx.controls.BlackBlox>
 
             </form>;
@@ -323,6 +329,12 @@ export class CompDivsEdit extends Views.ReactView {
         this.setState({
             loading: true
         });
+    }
+
+
+    add_dept() {
+
+        this.props.owner.notify('add_depart');
     }
 
 
