@@ -31,7 +31,7 @@ export class CompDivs extends Views.ReactView {
 
     constructor(props: CompDivsProps) {
         super(props);
-
+        this.data = [];
         this.state.loading = true;
     }
 
@@ -43,9 +43,12 @@ export class CompDivs extends Views.ReactView {
                     <i className="fa fa-plus-circle" aria-hidden="true"></i> Add new division
                 </button> 
                 <hr/>
-                <div className="datalist" style={{ fontSize: 18}}>
-                    <table className="table" style={{ width:'100%' }}>
-                    </table>
+                <div className="tree-view">
+                    <div className="dd">
+                        <ol className="dd-list">
+                            {this.build_treelist()}
+                        </ol>
+                    </div>
                 </div>           
             </div>;
 
@@ -65,10 +68,17 @@ export class CompDivs extends Views.ReactView {
 
     componentDidUpdate() {
 
-        this.display_datatable();
+        if (this.data.length > 0)
+        {
+            this.root.find('.tree-view > .dd')['nestable']().nestable('collapseAll');
+        }
+
+        this.root.find('.dd-item').off('hover');
+
+        this.root.find('.dd-item .dd-handle').first().addClass('selected');
+
     }
-
-
+    
     load_data() {
 
         var model = Backendless.Persistence.of('compdivs');
@@ -107,6 +117,31 @@ export class CompDivs extends Views.ReactView {
 
         return d.promise;
         
+    }
+
+
+    build_treelist() {
+        
+        var count = 1;
+
+        var nodes = _.map(this.data, d => {
+
+            var content = <div className="row dd-nodrag">
+                            <div className="col-xs-6" style={{ fontSize: '20px!important' }}>
+                                <div style={{ verticalAlign:'middel' }} >{d['compdiv_title']}</div>
+                            </div>                                                        
+                          </div>
+
+            var item = <li className="dd-item" data-id={count++} style={{ cursor: 'pointer',  }}>
+                            <div className="dd-handle">
+                                {content}
+                            </div>                            
+                      </li>
+
+            return item;
+        });
+
+        return nodes;
     }
 
 
@@ -179,8 +214,9 @@ export class CompDivsEdit extends Views.ReactView {
 
                     <br />
 
+                    <button className="btn btn-info" style={{ marginLeft: 10 }}><i className="fa fa-plus"></i> {"Add department"}</button>
                     <button className="btn btn-danger pull-right" style={{ marginLeft:10 }}><i className="fa fa-times"></i> Cancel</button>
-                    <button className="btn btn-info pull-right btn-save"><i className="fa fa-check"></i> Save</button>
+                    <button className="btn btn-primary pull-right btn-save"><i className="fa fa-check"></i> Save</button>
 
                     <br/>
 

@@ -2,10 +2,11 @@
 // for more information see the following page on the TypeScript wiki:
 // https://github.com/Microsoft/TypeScript/wiki/JSX
 define(["require", "exports", "../lib/jx"], function (require, exports, jx_1) {
+    "use strict";
     function start() {
         jx_1.Application.InitApplication();
     }
     exports.start = start;
     start();
 });
-//# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/config/start.js.map
+//# sourceMappingURL=F:/StampDev/SmartAdmin/SmartAdmin/js/config/start.js.map

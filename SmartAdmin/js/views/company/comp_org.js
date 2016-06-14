@@ -8,13 +8,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 define(["require", "exports", 'react', '../../lib/jx', './comp_divs', '../../lib/jx'], function (require, exports, React, jx, divs, jx_1) {
+    "use strict";
     var CompOrg = (function (_super) {
         __extends(CompOrg, _super);
         function CompOrg() {
             _super.apply(this, arguments);
         }
         CompOrg.prototype.render = function () {
-            var html = React.createElement("div", {"className": "col-lg-12"}, React.createElement(jx.controls.BigLabel, {"label": "Company divisions"}), React.createElement("br", null), React.createElement("div", {"className": "col-lg-4", "style": { paddingLeft: 0 }}, React.createElement(jx.controls.BlackBlox, {"title": "Divisions", "icon": React.createElement("i", {"className": "fa fa-cubes"})}, React.createElement("br", null), React.createElement(divs.CompDivs, {"owner": this}))), React.createElement("div", {"className": "col-lg-5"}, this.display_editForm()));
+            var html = React.createElement("div", {className: "col-lg-12"}, React.createElement(jx.controls.BigLabel, {label: "Company divisions"}), React.createElement("br", null), React.createElement("div", {className: "col-lg-6", style: { paddingLeft: 0 }}, React.createElement(jx.controls.BlackBlox, {title: "Divisions", icon: React.createElement("i", {className: "fa fa-cubes"})}, React.createElement("br", null), React.createElement(divs.CompDivs, {owner: this}))), React.createElement("div", {className: "col-lg-6"}, this.display_editForm()));
             return html;
         };
         CompOrg.prototype.componentDidMount = function () {
@@ -34,11 +35,11 @@ define(["require", "exports", 'react', '../../lib/jx', './comp_divs', '../../lib
         };
         CompOrg.prototype.display_editForm = function () {
             if (this.state.addNew) {
-                return React.createElement(divs.CompDivsEdit, {"mode": "new"});
+                return React.createElement(divs.CompDivsEdit, {mode: "new"});
             }
         };
         return CompOrg;
-    })(jx_1.Views.ReactView);
+    }(jx_1.Views.ReactView));
     exports.CompOrg = CompOrg;
 });
-//# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/views/company/comp_org.js.map
+//# sourceMappingURL=F:/StampDev/SmartAdmin/SmartAdmin/js/views/company/comp_org.js.map

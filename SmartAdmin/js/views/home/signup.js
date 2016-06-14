@@ -7,6 +7,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 define(["require", "exports", 'react', '../../lib/jx'], function (require, exports, React, jx_1) {
+    "use strict";
     function fn() {
         var props = {
             page_navmenu: '.navbar',
@@ -27,6 +28,6 @@ define(["require", "exports", 'react', '../../lib/jx'], function (require, expor
             this.root.load('/html/landing_signup.html');
         };
         return Page;
-    })(jx_1.Views.ReactView);
+    }(jx_1.Views.ReactView));
 });
-//# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/views/home/signup.js.map
+//# sourceMappingURL=F:/StampDev/SmartAdmin/SmartAdmin/js/views/home/signup.js.map
