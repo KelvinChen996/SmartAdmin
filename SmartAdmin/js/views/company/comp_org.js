@@ -9,6 +9,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 define(["require", "exports", 'react', 'react-dom', '../../lib/jx', './comp_divs', './comp_dept', '../../lib/jx'], function (require, exports, React, ReactDOM, jx, divs, deps, jx_1) {
+    "use strict";
     (function (EntryMode) {
         EntryMode[EntryMode["none"] = 0] = "none";
         EntryMode[EntryMode["add_div"] = 1] = "add_div";
@@ -23,7 +24,7 @@ define(["require", "exports", 'react', 'react-dom', '../../lib/jx', './comp_divs
             _super.apply(this, arguments);
         }
         CompOrg.prototype.render = function () {
-            var html = React.createElement("div", {"className": "col-lg-12"}, React.createElement(jx.controls.BigLabel, {"label": "Company divisions"}), React.createElement("br", null), React.createElement("div", {"className": "col-lg-6", "style": { paddingLeft: 0 }}, React.createElement(jx.controls.BlackBlox, {"title": "Divisions", "icon": React.createElement("i", {"className": "fa fa-cubes"})}, React.createElement("br", null), React.createElement(divs.CompDivs, {"ref": "divs_comp", "owner": this}))), React.createElement("div", {"className": "col-lg-6"}, React.createElement("div", {"className": "col-lg-12 edit-div", "style": { padding: 0 }}, this.display_DivEntrView()), React.createElement("div", {"className": "edit-dep", "style": { padding: 0 }})));
+            var html = React.createElement("div", {className: "col-lg-12"}, React.createElement(jx.controls.BigLabel, {label: "Company divisions"}), React.createElement("br", null), React.createElement("div", {className: "col-lg-6", style: { paddingLeft: 0 }}, React.createElement(jx.controls.BlackBlox, {title: "Divisions", icon: React.createElement("i", {className: "fa fa-cubes"})}, React.createElement("br", null), React.createElement(divs.CompDivs, {ref: "divs_comp", owner: this}))), React.createElement("div", {className: "col-lg-6"}, React.createElement("div", {className: "col-lg-12 edit-div", style: { padding: 0 }}, this.display_DivEntrView()), React.createElement("div", {className: "edit-dep", style: { padding: 0 }})));
             return html;
         };
         CompOrg.prototype.notify = function (cmd, data) {
@@ -40,7 +41,7 @@ define(["require", "exports", 'react', 'react-dom', '../../lib/jx', './comp_divs
                     {
                         this.setState({
                             entrymode: EntryMode.edit_div,
-                            divID: data
+                            div_id: data
                         });
                     }
                     break;
@@ -52,8 +53,20 @@ define(["require", "exports", 'react', 'react-dom', '../../lib/jx', './comp_divs
                 case 'add_depart':
                     {
                         this.state.entrymode = EntryMode.add_dep;
-                        ReactDOM.render(React.createElement(deps.CompDepart, null), this.root.find('.edit-dep')[0]);
-                        $('.div-mode').addClass('hidden');
+                        ReactDOM.render(React.createElement(deps.CompDepart, {owner: this, div_id: this.state.div_id}), this.root.find('.edit-dep')[0]);
+                        this.root.find('.edit-mode').addClass('hidden');
+                        this.root.find('.view-mode').removeClass('hidden');
+                    }
+                    break;
+                case 'edit-department':
+                    {
+                        this.setState({
+                            entrymode: EntryMode.edit_dep,
+                            div_id: data.div_id
+                        });
+                        this.root.find('.edit-mode').addClass('hidden');
+                        this.root.find('.view-mode').removeClass('hidden');
+                        ReactDOM.render(React.createElement(deps.CompDepart, {owner: this, div_id: data.div_id, dept_id: data.dept_id}), this.root.find('.edit-dep')[0]);
                     }
                     break;
             }
@@ -65,19 +78,17 @@ define(["require", "exports", 'react', 'react-dom', '../../lib/jx', './comp_divs
                 owner: this
             };
             switch (this.state.entrymode) {
-                //case EntrMode.add_dep: {
-                //    return <deps.CompDepart />
-                //}
                 case EntryMode.add_div:
                     {
                         props.mode = 'new';
                     }
                     break;
+                case EntryMode.edit_dep:
                 case EntryMode.add_dep:
                 case EntryMode.edit_div:
                     {
                         props.mode = 'edit';
-                        props.id = this.state.divID;
+                        props.id = this.state.div_id;
                     }
                     break;
             }
@@ -85,10 +96,8 @@ define(["require", "exports", 'react', 'react-dom', '../../lib/jx', './comp_divs
                 return React.createElement(divs.CompDivsEdit, React.__spread({}, props));
             }
         };
-        CompOrg.prototype.add_new_depart = function () {
-        };
         return CompOrg;
-    })(jx_1.Views.ReactView);
+    }(jx_1.Views.ReactView));
     exports.CompOrg = CompOrg;
 });
 //# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/views/company/comp_org.js.map

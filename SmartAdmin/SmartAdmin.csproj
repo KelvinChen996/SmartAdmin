@@ -543,6 +543,7 @@
     <Content Include="js\plugin\jqgrid\grid.locale-en.min.js" />
     <Content Include="js\plugin\jqgrid\jquery.jqGrid.min.js" />
     <Content Include="js\plugin\jquery-form\jquery-form.min.js" />
+    <Content Include="js\plugin\jquery-nestable\jquery.nestable.js" />
     <Content Include="js\plugin\jquery-nestable\jquery.nestable.min.js" />
     <Content Include="js\plugin\jquery-touch\jquery.ui.touch-punch.min.js" />
     <Content Include="js\plugin\jquery-validate\jquery.validate.min.js" />

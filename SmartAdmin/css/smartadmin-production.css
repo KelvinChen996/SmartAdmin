@@ -9521,12 +9521,13 @@ textarea.clone {
 .dd3-handle:hover:before {
   color: #C27616;
 }
-.dd-handle:hover + .dd-list .dd-handle,
+
+/*.dd-handle:hover + .dd-list .dd-handle,
 .dd-handle:hover {
   background: #FDDFB3 !important;
   border: 1px solid #FAA937;
   color: #333 !important;
-}
+}*/
 
 .dd-handle > span {
   font-size: 13px;

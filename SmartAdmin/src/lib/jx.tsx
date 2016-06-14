@@ -40,7 +40,7 @@ export module Types {
 
 export module Views {
 
-    export interface ReactProps extends React.Props<any> {
+    export interface ReactProps extends React.HTMLProps<any> {
         owner?: ReactView,
         className?: string
     }
@@ -479,7 +479,7 @@ export module controls {
 
         render() {
 
-            var html = <div className="breadcrumb-wrapper">
+            var html = <div className="breadcrumb-wrapper" {...this.props}>
                 <p className="label-value" style={{ fontSize: 32, fontWeight: 100 }}>{this.format_label() }{this.is_required() }</p>
             </div>;
 

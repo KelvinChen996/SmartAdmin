@@ -25,14 +25,19 @@ export class CompDivs extends Views.ReactView {
 
     props: CompDivsProps;
     state: CompDivsState;
-    data: any[];
+
+    divs_data: any[];
+    depts_data: any[];
+
     datatable: any;
     selected_id: string;
 
 
     constructor(props: CompDivsProps) {
         super(props);
-        this.data = [];
+        this.divs_data = [];
+        this.depts_data = [];
+
         this.state.loading = true;
     }
 
@@ -64,7 +69,7 @@ export class CompDivs extends Views.ReactView {
 
         if (this.state.loading)
         {
-            this.load_data();
+            this.load_divs_data();
         } 
     }
 
@@ -73,7 +78,7 @@ export class CompDivs extends Views.ReactView {
 
         if (this.state.loading) {
 
-            this.load_data();
+            this.load_divs_data();
 
         } else {
 
@@ -86,21 +91,36 @@ export class CompDivs extends Views.ReactView {
 
     init_view() {
 
-        if (this.data.length > 0) {
-            this.root.find('.tree-view > .dd')['nestable']().nestable('collapseAll');
+        if (this.divs_data.length > 0) {
+            this['nestable'] = this.root.find('.tree-view > .dd')['nestable']().nestable('collapseAll');
         }
 
         this.root.find('.dd-item').off('hover');
 
         this.root.find('.dd-item').off('click');
 
-        this.root.find('.dd-item').click(e => {
+        this.root.find('.dd-item .btn-edit').click(e => {
 
-            var id = $(e.currentTarget).attr('data-id');
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            var id = $(e.currentTarget).closest('.dd-item').attr('data-id');
 
             this.highlight_selection(id);
 
             this.edit_division(id);
+        });
+
+        this.root.find('.btn-edit-dept').off('click');
+        this.root.find('.btn-edit-dept').click(e => {
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            var dept_id = $(e.currentTarget).closest('.department').attr('data-id');
+            var div_id = $(e.currentTarget).closest('.division').attr('data-id');
+
+            this.edit_department(div_id, dept_id);
         });
 
         if (this.selected_id) {
@@ -131,6 +151,13 @@ export class CompDivs extends Views.ReactView {
         li.find('.dd-handle').first().addClass('selected');
 
         li.find('.icon-select').removeClass('hidden');
+
+        //if (!$(li).hasClass('dd-collapsed')) {
+
+        //    var plugin = this.root.find('.tree-view > .dd').data('nestable');
+
+        //    plugin.expandItem(li);
+        //}        
     }
 
 
@@ -138,14 +165,24 @@ export class CompDivs extends Views.ReactView {
         this.props.owner.notify('edit-division', id);
     }
 
+
+    edit_department(div_id: string, dept_id: string) {
+
+        this.props.owner.notify('edit-department', {
+            div_id: div_id,
+            dept_id: dept_id
+        });
+    }
+
     
-    load_data() {
+    load_divs_data() {
 
         var model = Backendless.Persistence.of('compdivs');
 
         var qry = new Backendless.DataQuery();
 
         qry.condition = "usrid = '{0}'".format(Backendless.UserService.getCurrentUser()['objectId']);
+        qry.options = { relations: ["depts"] };
 
         var d = Q.defer();
 
@@ -153,7 +190,7 @@ export class CompDivs extends Views.ReactView {
 
         model.find(qry, new Backendless.Async((res:any) => {
 
-            this.data = res.data;
+            this.divs_data = res.data;
 
             utils.unspin(this.root);
 
@@ -175,61 +212,81 @@ export class CompDivs extends Views.ReactView {
 
         }));
 
-        return d.promise;
-        
+        return d.promise;        
     }
-
-
+    
+    
     build_treelist() {
         
         var count = 1;
 
-        var nodes = _.map(this.data, d => {
-
-            var content = <div className="row dd-nodrag">
-                            <div className="col-xs-11" >
-                                <div style={{ verticalAlign: 'middel' }} >{d['compdiv_title']}</div>
-                                <span className="font-xs text-muted">
-                                    {d['compdiv_descr']}
-                                </span>
-                            </div>
-                            <div className="col-xs-1">
-                                <i className="fa fa-arrow-right text-primary hidden icon-select"></i>
-                            </div>                                                        
-                          </div>
-
-            var item = <li className="dd-item" data-id={d['objectId']} style={{ cursor: 'pointer',  }}>
-                            <div className="dd-handle content">
-                                {content}
-                            </div>                            
-                      </li>
+        var nodes = _.map(this.divs_data, d => {
+            
+            var item =
+                <li className="dd-item division" data-id={d['objectId']} style={{ cursor: 'pointer', }}>
+                    <div className="dd-handle dd-nodrag">
+                        <div className="content">
+                            <h4 className="text-primary"><span className="semi-bold">
+                                {d['compdiv_title']}</span><span className="pull-right text-muted"></span>
+                            </h4>
+                            <span className="text-muted"><small>{d['compdiv_descr']}</small></span>
+                            <span className="pull-right">
+                                <a href="#" className="text-primary btn-edit"><i className="fa fa-edit"></i> edit</a>
+                            </span>
+                        </div>                        
+                    </div>       
+                    {this.load_departments(d) }                     
+                </li>
 
             return item;
         });
 
         return nodes;
     }
+    
 
+    load_departments(div:any) {
 
-    display_datatable() {
+        var depts: any[] = div['depts'];
 
-        if (!this.state.loading) {
-
-            if (!this.datatable) {
-                this.datatable = this.root.find('table').DataTable({
-                    columns: [
-                        { data: 'compdiv_title', title: 'Division title', width:'40%' },
-                        //{ data: 'compdiv_descr', title: 'Description' }
-                    ],
-                    paging: false,                    
-                    lengthChange: false,
-                    info : false,
-                    data: this.data
-                });
-            }
-            
+        if (!depts || depts.length === 0) {
+            return;
         }
 
+
+        var html =
+            <ol className="dd-list">
+
+                {
+                    _.map(depts, dep => {
+
+                        var li =
+                            <li className="dd-item department dd-nodrag" data-id={dep['objectId']} >
+
+                                <div className="dd-handle dd-nodrag">
+
+                                    <div className="content-department">
+
+                                        <h4 className="text-primary"><span className="semi-bold">{dep['compdept_title']}</span></h4>
+
+                                        <span className="text-muted">{dep['compdept_descr']}</span>
+
+                                        <span className="pull-right">
+                                            <a href="#" className="text-primary btn-edit-dept"><i className="fa fa-pencil"></i> edit</a>
+                                        </span>
+
+                                    </div>
+                                    
+                                </div>
+
+                            </li>
+
+                        return li;
+                    })
+                }
+            </ol> 
+
+        return html;
     }
 
 
@@ -272,11 +329,13 @@ export class CompDivsEdit extends Views.ReactView {
                 <jx.controls.BlackBlox title={mode} icon={<i className="fa fa-edit"></i>} >
 
                     <b.FormGroup controlId="formControlsText">
-                        <jx.controls.BigLabel label="Division title" />
-                        <b.FormControl type="text" data-bind="textInput:compdiv_title" id="compdiv_title" placeholder="Enter a title" />
+                        <jx.controls.BigLabel className="edit-mode" label="Division title" />
+                        <b.FormControl type="text" data-bind="textInput:compdiv_title" className="edit-mode" id="compdiv_title" placeholder="Enter a title" />
+                        <p data-bind="text:compdiv_title" className="view-mode hidden" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>
+                        <p data-bind="text:compdiv_descr" className="view-mode text-muted hidden" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>
                     </b.FormGroup>
 
-                    <div className="div-mode">
+                    <div className="edit-mode">
 
                         <b.FormGroup controlId="formControlsText">
                             <jx.controls.BigLabel label="Division description" />
@@ -305,7 +364,11 @@ export class CompDivsEdit extends Views.ReactView {
 
 
     componentDidMount() {
-        
+
+        if (!this.props.id) {
+            this.root.find('.btn-add-dep').addClass('hidden');
+        }
+
         if (this.state.loading) {
             this.load_data();
         }                

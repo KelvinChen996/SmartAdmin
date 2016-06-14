@@ -19,11 +19,12 @@ import { Views, Types } from '../../lib/jx';
 export enum EntryMode { none, add_div, edit_div, add_dep, edit_dep }
 interface CompOrgState extends Views.ReactState {
     entrymode?: EntryMode,
-    divID?: string
+    div_id?: string
 }
 export class CompOrg extends Views.ReactView {
 
     state: CompOrgState;
+
 
     render() {
 
@@ -79,7 +80,7 @@ export class CompOrg extends Views.ReactView {
                 
                 this.setState({
                     entrymode: EntryMode.edit_div,
-                    divID: data
+                    div_id: data
                 } as CompOrgState);
             } break;
 
@@ -90,14 +91,31 @@ export class CompOrg extends Views.ReactView {
 
 
             case 'add_depart': {
-
+                
                 this.state.entrymode = EntryMode.add_dep;
 
-                ReactDOM.render(<deps.CompDepart />, this.root.find('.edit-dep')[0]);
+                ReactDOM.render(<deps.CompDepart owner={this} div_id={this.state.div_id}  />, this.root.find('.edit-dep')[0]);
 
-                $('.div-mode').addClass('hidden');
+                this.root.find('.edit-mode').addClass('hidden');
+                this.root.find('.view-mode').removeClass('hidden');
 
             } break;
+
+
+            case 'edit-department': {
+
+                this.setState({
+                    entrymode: EntryMode.edit_dep,
+                    div_id: data.div_id
+                } as CompOrgState);
+                
+                this.root.find('.edit-mode').addClass('hidden');
+                this.root.find('.view-mode').removeClass('hidden');
+
+                ReactDOM.render(<deps.CompDepart owner={this} div_id={data.div_id} dept_id={data.dept_id}  />, this.root.find('.edit-dep')[0]);
+
+            } break;
+
         }
 
         return Q.resolve(true);
@@ -112,21 +130,21 @@ export class CompOrg extends Views.ReactView {
         }
 
         switch (this.state.entrymode) {
-
-            //case EntrMode.add_dep: {
-            //    return <deps.CompDepart />
-            //}
-
+            
             case EntryMode.add_div: {
                 props.mode = 'new';
             } break;
 
 
+            case EntryMode.edit_dep:
             case EntryMode.add_dep:
             case EntryMode.edit_div: {
                 props.mode = 'edit';
-                props.id = this.state.divID;
+                props.id = this.state.div_id;
             } break;
+
+            
+
         }
         
         if (props.mode) {            
@@ -135,7 +153,4 @@ export class CompOrg extends Views.ReactView {
     }
 
 
-    add_new_depart() {
-
-    }
 }
