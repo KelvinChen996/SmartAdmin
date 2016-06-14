@@ -14,7 +14,9 @@ import { Views, Types } from '../../lib/jx';
 
 
 interface CompOrgState extends Views.ReactState {
-    addNew?: boolean
+    addNew?: boolean,
+    editDiv?: boolean,
+    divID?: string
 }
 export class CompOrg extends Views.ReactView {
 
@@ -35,7 +37,7 @@ export class CompOrg extends Views.ReactView {
 
                         <br />
 
-                        <divs.CompDivs owner={this} />
+                        <divs.CompDivs ref="divs_comp" owner={this} />
 
                     </jx.controls.BlackBlox>
 
@@ -62,21 +64,59 @@ export class CompOrg extends Views.ReactView {
         switch (cmd) {
 
             case 'add-new-division': {
+                
                 this.setState({
                     addNew: true
                 });
+            } break;
+
+            case 'edit-division': {
+                
+                this.setState({
+                    editDiv: true,
+                    divID: data
+                });
+            } break;
+
+
+            case 'update_list': {
+
+                (this.refs["divs_comp"] as divs.CompDivs).update();
+
             } break;
         }
 
         return Q.resolve(true);
     }
-
+        
 
     display_editForm() {
 
-        if (this.state.addNew) {
-            return <divs.CompDivsEdit mode="new" />
+        var props: divs.CompDivsEditProps = {
+            key: utils.guid(),
+            owner:this        
         }
 
+        if (this.state.addNew) {
+
+            this.state.addNew = false;
+
+            props.mode = 'new';
+            
+        }
+
+
+        if (this.state.editDiv) {
+
+            this.state.editDiv = false;
+
+            props.mode = 'edit';
+            props.id = this.state.divID;
+            
+        }
+
+        if (props.mode) {            
+            return <divs.CompDivsEdit  {...props} />
+        }
     }
 }

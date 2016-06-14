@@ -79,7 +79,7 @@
     <Content Include="css\smartadmin-skins.min.css" />
     <Content Include="css\toastr.css" />
     <Content Include="css\waitMe.css" />
-    <Content Include="css\your_style.css" />
+    <Content Include="css\my_style.css" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.woff" />
@@ -98,6 +98,8 @@
     <Content Include="fonts\summernote.eot" />
     <Content Include="fonts\summernote.ttf" />
     <Content Include="fonts\summernote.woff" />
+    <Content Include="js\knockout-3.debug.js" />
+    <Content Include="js\ko.mapping.js" />
     <Content Include="js\libs\jquery-2.1.1.min.map" />
     <Content Include="js\plugin\bootstrap-tags\dist\bootstrap-tagsinput.min.js.map" />
     <Content Include="js\plugin\ckeditor\CHANGES.md" />

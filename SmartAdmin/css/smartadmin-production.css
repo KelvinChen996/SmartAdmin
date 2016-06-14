@@ -9528,12 +9528,6 @@ textarea.clone {
   color: #333 !important;
 }
 
- .dd-handle.selected {
-  background: #f7c67e !important;
-  border: 1px solid #FAA937;
-  color: #333 !important;
-}
-
 .dd-handle > span {
   font-size: 13px;
   color: #777;

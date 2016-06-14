@@ -17,3 +17,8 @@
  * - BODY
  * - CUSTOM STYLES
  */
+
+.dd-handle.selected {  
+  border: 1px solid #FAA937;
+  color: #333 !important;
+}
