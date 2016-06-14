@@ -32,6 +32,10 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
             }
             this.root.find('.dd-item').off('hover');
             this.root.find('.dd-item .dd-handle').first().addClass('selected');
+            this.root.find('.dd-item').off('click');
+            this.root.find('.dd-item').click(function (e) {
+                alert('bingo');
+            });
         };
         CompDivs.prototype.load_data = function () {
             var _this = this;

@@ -77,6 +77,12 @@ export class CompDivs extends Views.ReactView {
 
         this.root.find('.dd-item .dd-handle').first().addClass('selected');
 
+        this.root.find('.dd-item').off('click');
+
+        this.root.find('.dd-item').click(e => {
+
+            alert('bingo');
+        });
     }
     
     load_data() {
