@@ -24,7 +24,7 @@ define(["require", "exports", 'react', 'react-dom', '../../lib/jx', './comp_divs
             _super.apply(this, arguments);
         }
         CompOrg.prototype.render = function () {
-            var html = React.createElement("div", {className: "col-lg-12"}, React.createElement(jx.controls.BigLabel, {label: "Company divisions"}), React.createElement("br", null), React.createElement("div", {className: "col-lg-6", style: { paddingLeft: 0 }}, React.createElement(jx.controls.BlackBlox, {title: "Divisions", icon: React.createElement("i", {className: "fa fa-cubes"})}, React.createElement("br", null), React.createElement(divs.CompDivs, {ref: "divs_comp", owner: this}))), React.createElement("div", {className: "col-lg-6"}, React.createElement("div", {className: "col-lg-12 edit-div", style: { padding: 0 }}, this.display_DivEntrView()), React.createElement("div", {className: "edit-dep", style: { padding: 0 }})));
+            var html = React.createElement("div", {className: "col-lg-12"}, React.createElement(jx.controls.BigLabel, {label: "Company divisions"}), React.createElement("br", null), React.createElement("div", {className: "col-lg-6", style: { paddingLeft: 0 }}, React.createElement(jx.controls.BlackBlox, {title: "Divisions", icon: React.createElement("i", {className: "fa fa-cubes"})}, React.createElement("br", null), React.createElement(divs.CompDivs, {ref: "divs_comp", ext_ids: this.state.sel_ids, owner: this}))), React.createElement("div", {className: "col-lg-6"}, React.createElement("div", {className: "col-lg-12 edit-div", style: { padding: 0 }}, this.display_DivEntrView()), React.createElement("div", {className: "edit-dep", style: { padding: 0 }})));
             return html;
         };
         CompOrg.prototype.notify = function (cmd, data) {
@@ -39,9 +39,19 @@ define(["require", "exports", 'react', 'react-dom', '../../lib/jx', './comp_divs
                     break;
                 case 'edit-division':
                     {
+                        var expnd_list = [];
+                        _.each(this.root.find('.dd-item.division'), function (el) {
+                            if (!$(el).hasClass('dd-collapsed')) {
+                                expnd_list.push(el);
+                            }
+                        });
+                        var selected_ids = _.map(expnd_list, function (el) {
+                            return $(el).attr('data-id');
+                        });
                         this.setState({
                             entrymode: EntryMode.edit_div,
-                            div_id: data
+                            div_id: data,
+                            sel_ids: selected_ids
                         });
                     }
                     break;

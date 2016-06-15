@@ -19,7 +19,8 @@ import { Views, Types } from '../../lib/jx';
 export enum EntryMode { none, add_div, edit_div, add_dep, edit_dep }
 interface CompOrgState extends Views.ReactState {
     entrymode?: EntryMode,
-    div_id?: string
+    div_id?: string,
+    sel_ids?: any[]
 }
 export class CompOrg extends Views.ReactView {
 
@@ -41,7 +42,7 @@ export class CompOrg extends Views.ReactView {
 
                         <br />
 
-                        <divs.CompDivs ref="divs_comp" owner={this} />
+                        <divs.CompDivs ref="divs_comp" ext_ids={this.state.sel_ids} owner={this} />
 
                     </jx.controls.BlackBlox>
 
@@ -77,10 +78,25 @@ export class CompOrg extends Views.ReactView {
             } break;
 
             case 'edit-division': {
+
+                var expnd_list = [];
+
+                _.each(this.root.find('.dd-item.division'), el => {
+
+                    if (!$(el).hasClass('dd-collapsed')) {
+                        expnd_list.push(el);
+                    }
+                });
+                
+
+                var selected_ids = _.map(expnd_list, el => {
+                    return $(el).attr('data-id');
+                });
                 
                 this.setState({
                     entrymode: EntryMode.edit_div,
-                    div_id: data
+                    div_id: data,
+                    sel_ids: selected_ids
                 } as CompOrgState);
             } break;
 

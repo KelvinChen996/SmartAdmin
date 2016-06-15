@@ -19,6 +19,7 @@ interface CompDivsState extends Views.ReactState {
 }
 
 export interface CompDivsProps extends Views.ReactProps {
+    ext_ids?:any[]
 }
 
 export class CompDivs extends Views.ReactView {
@@ -123,13 +124,26 @@ export class CompDivs extends Views.ReactView {
             this.highlight_selection(this.selected_id);
             this.selected_id = null;
         }
+
+        if (this.props.ext_ids) {
+
+            var plugin = this.root.find('.tree-view > .dd').data('nestable');
+
+            _.each(this.props.ext_ids, id => {
+
+                var li = this.root.find('[data-id="{0}"]'.format(id));
+
+                plugin.expandItem(li); 
+            });
+
+        }
     }
 
 
     update() {
 
         this.selected_id = this.root.find('.selected').closest('.dd-item').attr('data-id');
-
+        
         this.setState({
             loading: true
         });
@@ -139,21 +153,11 @@ export class CompDivs extends Views.ReactView {
     highlight_selection(id: string) {
 
         this.root.find('.selected').removeClass('selected');
-
-        this.root.find('.icon-select').addClass('hidden');
-
+        
         var li = this.root.find('[data-id="{0}"]'.format(id));
 
         li.find('.dd-handle').first().addClass('selected');
-
-        li.find('.icon-select').removeClass('hidden');
-
-        //if (!$(li).hasClass('dd-collapsed')) {
-
-        //    var plugin = this.root.find('.tree-view > .dd').data('nestable');
-
-        //    plugin.expandItem(li);
-        //}        
+        
     }
 
 
@@ -244,11 +248,6 @@ export class CompDivs extends Views.ReactView {
     load_departments(div:any) {
 
         var depts: any[] = div['depts'];
-
-        //if (!depts || depts.length === 0) {
-        //    return;
-        //}
-
 
         var html =
             <ol className="dd-list">
