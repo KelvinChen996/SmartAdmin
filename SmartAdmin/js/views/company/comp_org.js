@@ -100,4 +100,4 @@ define(["require", "exports", 'react', 'react-dom', '../../lib/jx', './comp_divs
     }(jx_1.Views.ReactView));
     exports.CompOrg = CompOrg;
 });
-//# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/views/company/comp_org.js.map
+//# sourceMappingURL=F:/StampDev/SmartAdmin/SmartAdmin/js/views/company/comp_org.js.map

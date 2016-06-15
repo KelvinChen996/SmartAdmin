@@ -292,4 +292,4 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
         controls.BigLabel = BigLabel;
     })(controls = exports.controls || (exports.controls = {}));
 });
-//# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/lib/jx.js.map
+//# sourceMappingURL=F:/StampDev/SmartAdmin/SmartAdmin/js/lib/jx.js.map

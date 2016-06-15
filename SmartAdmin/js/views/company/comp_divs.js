@@ -40,9 +40,7 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
             if (this.divs_data.length > 0) {
                 this['nestable'] = this.root.find('.tree-view > .dd')['nestable']().nestable('collapseAll');
             }
-            this.root.find('.dd-item').off('hover');
-            this.root.find('.dd-item').off('click');
-            this.root.find('.dd-item .btn-edit').click(function (e) {
+            this.root.find('.dd-item .href-div-title').click(function (e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 var id = $(e.currentTarget).closest('.dd-item').attr('data-id');
@@ -116,18 +114,18 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
             var _this = this;
             var count = 1;
             var nodes = _.map(this.divs_data, function (d) {
-                var item = React.createElement("li", {className: "dd-item division", "data-id": d['objectId'], style: { cursor: 'pointer', }}, React.createElement("div", {className: "dd-handle dd-nodrag"}, React.createElement("div", {className: "content"}, React.createElement("h4", {className: "text-primary"}, React.createElement("span", {className: "semi-bold"}, d['compdiv_title']), React.createElement("span", {className: "pull-right text-muted"})), React.createElement("span", {className: "text-muted"}, React.createElement("small", null, d['compdiv_descr'])), React.createElement("span", {className: "pull-right"}, React.createElement("a", {href: "#", className: "text-primary btn-edit"}, React.createElement("i", {className: "fa fa-edit"}), " edit")))), _this.load_departments(d));
+                var item = React.createElement("li", {className: "dd-item division", "data-id": d['objectId'], style: { cursor: 'pointer', }}, React.createElement("div", {className: "dd-handle dd-nodrag"}, React.createElement("div", {className: "content"}, React.createElement("h4", {className: "text-primary"}, React.createElement("span", {className: "semi-bold"}, React.createElement("a", {href: "#", className: "href-div-title", style: { fontSize: 23 }}, d['compdiv_title']))), React.createElement("span", {className: "text-muted"}, React.createElement("small", null, d['compdiv_descr'])))), _this.load_departments(d));
                 return item;
             });
             return nodes;
         };
         CompDivs.prototype.load_departments = function (div) {
             var depts = div['depts'];
-            if (!depts || depts.length === 0) {
-                return;
-            }
-            var html = React.createElement("ol", {className: "dd-list"}, _.map(depts, function (dep) {
-                var li = React.createElement("li", {className: "dd-item department dd-nodrag", "data-id": dep['objectId']}, React.createElement("div", {className: "dd-handle dd-nodrag"}, React.createElement("div", {className: "content-department"}, React.createElement("h4", {className: "text-primary"}, React.createElement("span", {className: "semi-bold"}, dep['compdept_title'])), React.createElement("span", {className: "text-muted"}, dep['compdept_descr']), React.createElement("span", {className: "pull-right"}, React.createElement("a", {href: "#", className: "text-primary btn-edit-dept"}, React.createElement("i", {className: "fa fa-pencil"}), " edit")))));
+            //if (!depts || depts.length === 0) {
+            //    return;
+            //}
+            var html = React.createElement("ol", {className: "dd-list"}, React.createElement("li", {className: "dd-item department dd-nodrag", "data-id": utils.guid()}, React.createElement("div", {className: "dd-handle dd-nodrag"}, React.createElement("div", {className: "content-department"}, React.createElement("span", {className: "text-info"}, React.createElement("strong", null, "Departments")), React.createElement("span", {className: "pull-right"}, React.createElement("a", {href: "#", className: "btn btn-info btn-xs btn-edit-dept"}, React.createElement("i", {className: "fa fa-plus"}, " ", "add new")))))), _.map(depts, function (dep) {
+                var li = React.createElement("li", {className: "dd-item department dd-nodrag", "data-id": dep['objectId']}, React.createElement("div", {className: "dd-handle dd-nodrag"}, React.createElement("div", {className: "content-department"}, React.createElement("h4", {className: "text-primary", style: { fontSize: 23 }}, React.createElement("span", {className: "semi-bold"}, dep['compdept_title'])), React.createElement("span", {className: "text-muted"}, dep['compdept_descr']), React.createElement("span", {className: "pull-right hidden"}, React.createElement("a", {href: "#", className: "text-primary btn-edit-dept"}, React.createElement("i", {className: "fa fa-pencil"}), " edit")))));
                 return li;
             }));
             return html;
@@ -255,4 +253,4 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
         return CompDiv;
     }());
 });
-//# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/views/company/comp_divs.js.map
+//# sourceMappingURL=F:/StampDev/SmartAdmin/SmartAdmin/js/views/company/comp_divs.js.map

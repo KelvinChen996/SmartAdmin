@@ -94,12 +94,8 @@ export class CompDivs extends Views.ReactView {
         if (this.divs_data.length > 0) {
             this['nestable'] = this.root.find('.tree-view > .dd')['nestable']().nestable('collapseAll');
         }
-
-        this.root.find('.dd-item').off('hover');
-
-        this.root.find('.dd-item').off('click');
-
-        this.root.find('.dd-item .btn-edit').click(e => {
+        
+        this.root.find('.dd-item .href-div-title').click(e => {
 
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -226,13 +222,13 @@ export class CompDivs extends Views.ReactView {
                 <li className="dd-item division" data-id={d['objectId']} style={{ cursor: 'pointer', }}>
                     <div className="dd-handle dd-nodrag">
                         <div className="content">
-                            <h4 className="text-primary"><span className="semi-bold">
-                                {d['compdiv_title']}</span><span className="pull-right text-muted"></span>
+                            <h4 className="text-primary">
+                                <span className="semi-bold">
+                                    <a href="#" className="href-div-title" style={{ fontSize: 23 }}>{d['compdiv_title']}</a>
+                                </span>
                             </h4>
                             <span className="text-muted"><small>{d['compdiv_descr']}</small></span>
-                            <span className="pull-right">
-                                <a href="#" className="text-primary btn-edit"><i className="fa fa-edit"></i> edit</a>
-                            </span>
+                            
                         </div>                        
                     </div>       
                     {this.load_departments(d) }                     
@@ -249,14 +245,26 @@ export class CompDivs extends Views.ReactView {
 
         var depts: any[] = div['depts'];
 
-        if (!depts || depts.length === 0) {
-            return;
-        }
+        //if (!depts || depts.length === 0) {
+        //    return;
+        //}
 
 
         var html =
             <ol className="dd-list">
+                <li className="dd-item department dd-nodrag" data-id={utils.guid() }>
+                    <div className="dd-handle dd-nodrag">
+                        <div className="content-department">
 
+                                <span className="text-info"><strong>Departments</strong></span>
+                            
+                                <span className="pull-right">
+                                    <a href="#" className="btn btn-info btn-xs btn-edit-dept"><i className="fa fa-plus"> {"add new"}</i></a>
+                                </span>
+
+                            </div>    
+                    </div>
+                </li>
                 {
                     _.map(depts, dep => {
 
@@ -267,11 +275,11 @@ export class CompDivs extends Views.ReactView {
 
                                     <div className="content-department">
 
-                                        <h4 className="text-primary"><span className="semi-bold">{dep['compdept_title']}</span></h4>
+                                        <h4 className="text-primary" style={{ fontSize: 23 }}><span className="semi-bold">{dep['compdept_title']}</span></h4>
 
                                         <span className="text-muted">{dep['compdept_descr']}</span>
 
-                                        <span className="pull-right">
+                                        <span className="pull-right hidden">
                                             <a href="#" className="text-primary btn-edit-dept"><i className="fa fa-pencil"></i> edit</a>
                                         </span>
 
