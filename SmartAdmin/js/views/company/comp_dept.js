@@ -7,7 +7,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../../lib/jx'], function (require, exports, React, jx, rb, jx_1) {
-    "use strict";
     var b = rb;
     var CompDepart = (function (_super) {
         __extends(CompDepart, _super);
@@ -19,12 +18,12 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
         CompDepart.prototype.render = function () {
             var that = this;
             var title = 'Add new department';
-            var icon = React.createElement("i", {className: "fa fa-plus-circle"});
+            var icon = React.createElement("i", {"className": "fa fa-plus-circle"});
             if (!this.isNew) {
                 title = 'Edit department';
-                icon = React.createElement("i", {className: "fa fa-edit"});
+                icon = React.createElement("i", {"className": "fa fa-edit"});
             }
-            var html = React.createElement("div", {className: "col-lg-12 animated fadeInRight", style: { padding: 0 }}, React.createElement("br", null), React.createElement(jx.controls.BlackBlox, {title: title, icon: icon}, React.createElement("form", null, React.createElement(b.FormGroup, {controlId: "formControlsText"}, React.createElement(jx.controls.BigLabel, {label: "Department title"}), React.createElement(b.FormControl, {type: "text", "data-bind": "textInput:compdept_title", placeholder: "Enter a title"})), React.createElement(b.FormGroup, {controlId: "formControlsText"}, React.createElement(jx.controls.BigLabel, {label: "Department description"}), React.createElement("textarea", {rows: 3, id: "compdept_descr", "data-bind": "textInput:compdept_descr", className: "custom-scroll form-control"})), React.createElement("br", null), React.createElement("button", {type: "button", className: "btn btn-danger pull-right btn-cancel", onClick: function () { that.cancel(); }, style: { marginLeft: 10 }}, React.createElement("i", {className: "fa fa-times"}), " Cancel"), React.createElement("button", {type: "button", className: "btn btn-primary pull-right btn-save", onClick: function () { that.save(); }}, React.createElement("i", {className: "fa fa-check"}), " Save"), React.createElement("br", null))));
+            var html = React.createElement("div", {"className": "col-lg-12 animated fadeInRight", "style": { padding: 0 }}, React.createElement("br", null), React.createElement(jx.controls.BlackBlox, {"title": title, "icon": icon}, React.createElement("form", null, React.createElement(b.FormGroup, {"controlId": "formControlsText"}, React.createElement(jx.controls.BigLabel, {"label": "Department title"}), React.createElement(b.FormControl, {"type": "text", "data-bind": "textInput:compdept_title", "placeholder": "Enter a title"})), React.createElement(b.FormGroup, {"controlId": "formControlsText"}, React.createElement(jx.controls.BigLabel, {"label": "Department description"}), React.createElement("textarea", {"rows": 3, "id": "compdept_descr", "data-bind": "textInput:compdept_descr", "className": "custom-scroll form-control"})), React.createElement("br", null), React.createElement("button", {"type": "button", "className": "btn btn-danger pull-right btn-cancel", "onClick": function () { that.cancel(); }, "style": { marginLeft: 10 }}, React.createElement("i", {"className": "fa fa-times"}), " Cancel"), React.createElement("button", {"type": "button", "className": "btn btn-primary pull-right btn-save", "onClick": function () { that.save(); }}, React.createElement("i", {"className": "fa fa-check"}), " Save"), React.createElement("br", null))));
             return html;
         };
         Object.defineProperty(CompDepart.prototype, "isNew", {
@@ -131,12 +130,12 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
             });
         };
         return CompDepart;
-    }(jx_1.Views.ReactView));
+    })(jx_1.Views.ReactView);
     exports.CompDepart = CompDepart;
     var CompDept = (function () {
         function CompDept() {
         }
         return CompDept;
-    }());
+    })();
 });
 //# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/views/company/comp_dept.js.map

@@ -7,7 +7,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 define(["require", "exports", 'react', 'react-dom'], function (require, exports, React, ReactDOM) {
-    "use strict";
     var __router_ctx;
     var __app;
     var Views;
@@ -40,7 +39,7 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
                 return Q.resolve(true);
             };
             return ReactView;
-        }(React.Component));
+        })(React.Component);
         Views.ReactView = ReactView;
         var MasterPage = (function (_super) {
             __extends(MasterPage, _super);
@@ -128,7 +127,7 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
                 });
             };
             return MasterPage;
-        }(ReactView));
+        })(ReactView);
         Views.MasterPage = MasterPage;
         var HomePage = (function (_super) {
             __extends(HomePage, _super);
@@ -143,7 +142,7 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
                 return page_tmp;
             };
             return HomePage;
-        }(MasterPage));
+        })(MasterPage);
         Views.HomePage = HomePage;
     })(Views = exports.Views || (exports.Views = {}));
     var Application;
@@ -179,7 +178,7 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
                 return page(urlpath);
             };
             return Router;
-        }());
+        })();
         Application.Router = Router;
         var App = (function () {
             function App() {
@@ -243,7 +242,7 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
                 });
             };
             return App;
-        }());
+        })();
         Application.App = App;
         function InitApplication() {
             __app = new Application.App();
@@ -259,11 +258,11 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
                 _super.apply(this, arguments);
             }
             BlackBlox.prototype.render = function () {
-                var html = React.createElement("div", {className: "jarviswidget jarviswidget-color-white", "data-widget-attstyle": "jarviswidget-color-white", "data-widget-editbutton": "false"}, React.createElement("header", null, React.createElement("span", {className: "widget-icon"}, " ", this.props.icon, " "), React.createElement("h2", null, this.props.title)), React.createElement("div", {style: { paddingBottom: 20 }}, React.createElement("div", {className: "jarviswidget-editbox"}), React.createElement("div", {className: "widget-body no-padding"}, React.createElement("div", {className: "col-lg-12"}, this.props.children))));
+                var html = React.createElement("div", {"className": "jarviswidget jarviswidget-color-white", "data-widget-attstyle": "jarviswidget-color-white", "data-widget-editbutton": "false"}, React.createElement("header", null, React.createElement("span", {"className": "widget-icon"}, " ", this.props.icon, " "), React.createElement("h2", null, this.props.title)), React.createElement("div", {"style": { paddingBottom: 20 }}, React.createElement("div", {"className": "jarviswidget-editbox"}), React.createElement("div", {"className": "widget-body no-padding"}, React.createElement("div", {"className": "col-lg-12"}, this.props.children))));
                 return html;
             };
             return BlackBlox;
-        }(Views.ReactView));
+        })(Views.ReactView);
         controls.BlackBlox = BlackBlox;
         var BigLabel = (function (_super) {
             __extends(BigLabel, _super);
@@ -271,7 +270,7 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
                 _super.call(this, props);
             }
             BigLabel.prototype.render = function () {
-                var html = React.createElement("div", React.__spread({className: "breadcrumb-wrapper"}, this.props), React.createElement("p", {className: "label-value", style: { fontSize: 32, fontWeight: 100 }}, this.format_label(), this.is_required()));
+                var html = React.createElement("div", React.__spread({"className": "breadcrumb-wrapper"}, this.props), React.createElement("p", {"className": "label-value", "style": { fontSize: 32, fontWeight: 100 }}, this.format_label(), this.is_required()));
                 return html;
             };
             BigLabel.prototype.format_label = function () {
@@ -284,11 +283,11 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
             };
             BigLabel.prototype.is_required = function () {
                 if (this.props.require) {
-                    return React.createElement("span", {className: "required"}, "*");
+                    return React.createElement("span", {"className": "required"}, "*");
                 }
             };
             return BigLabel;
-        }(Views.ReactView));
+        })(Views.ReactView);
         controls.BigLabel = BigLabel;
     })(controls = exports.controls || (exports.controls = {}));
 });
