@@ -9,6 +9,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 define(["require", "exports", 'react', 'react-dom', './comp_org', '../../lib/jx'], function (require, exports, React, ReactDOM, org, jx_1) {
+    "use strict";
     function fn() {
         var props = {
             page_navmenu: '.navbar',
@@ -81,6 +82,6 @@ define(["require", "exports", 'react', 'react-dom', './comp_org', '../../lib/jx'
             return true;
         };
         return Explorer;
-    })(jx_1.Views.MasterPage);
+    }(jx_1.Views.MasterPage));
 });
-//# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/views/company/explorer.js.map
+//# sourceMappingURL=F:/StampDev/SmartAdmin/SmartAdmin/js/views/company/explorer.js.map

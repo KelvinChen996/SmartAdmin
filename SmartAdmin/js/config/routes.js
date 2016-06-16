@@ -3,6 +3,7 @@
 // for more information see the following page on the TypeScript wiki:
 // https://github.com/Microsoft/TypeScript/wiki/JSX
 define(["require", "exports"], function (require, exports) {
+    "use strict";
     exports.routes = {
         '/': {
             url: 'home/homepage'
@@ -39,4 +40,4 @@ define(["require", "exports"], function (require, exports) {
         },
     };
 });
-//# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/config/routes.js.map
+//# sourceMappingURL=F:/StampDev/SmartAdmin/SmartAdmin/js/config/routes.js.map
