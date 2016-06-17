@@ -40,7 +40,7 @@ export module Types {
 
 export module Views {
 
-    export interface ReactProps extends React.HTMLProps<any> {
+    export interface ReactProps extends React.Props<any> {
         owner?: ReactView,
         className?: string
     }
@@ -420,19 +420,38 @@ export module Application {
 
 export module controls {
 
-
-    export interface BlackBloxProps extends Views.ReactProps {
-        icon?:any,
-        title?: string
+    interface BoxPanelState extends Views.ReactState {
+        box_color: string
     }
-    export class BlackBlox extends Views.ReactView {
 
-        props: BlackBloxProps;
+    export interface BoxPanelProps extends Views.ReactProps {
+        icon?:any,
+        title?: string,
+        box_color?: string
+    }
+    export class BoxPanel extends Views.ReactView {
 
+        props: BoxPanelProps;
+        state: BoxPanelState;
+
+        constructor(props: BoxPanelProps) {
+            super(props);
+            this.init_default_state();
+        }
+
+        init_default_state() {
+
+            _.extend(this.state, {
+                box_color: !this.props.box_color ? 'white' : this.props.box_color
+            } as BoxPanelState);
+
+        }
+        //blueLight
         render() {
 
             var html =
-                <div className="jarviswidget jarviswidget-color-white" data-widget-attstyle="jarviswidget-color-white" data-widget-editbutton="false">
+                <div className={"jarviswidget jarviswidget-color-{0}".format(this.state.box_color) }
+                    data-widget-attstyle={"jarviswidget-color-{0}".format(this.state.box_color)} data-widget-editbutton="false">
 
                     <header>
                         <span className="widget-icon"> {this.props.icon} </span>
@@ -462,7 +481,7 @@ export module controls {
 
 
 
-    export interface BigLabelProps extends Views.ReactProps {
+    export interface BigLabelProps extends React.HTMLProps<any> {
         label?: string,
         lang?: string,
         require?: boolean

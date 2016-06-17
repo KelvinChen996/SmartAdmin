@@ -38,13 +38,13 @@ export class CompOrg extends Views.ReactView {
 
                 <div className="col-lg-6" style={{ paddingLeft: 0 }}>
                     
-                    <jx.controls.BlackBlox title="Divisions" icon={<i className="fa fa-cubes"></i>} >
+                    <jx.controls.BoxPanel box_color="blueLight" title="Divisions" icon={<i className="fa fa-cubes"></i>} >
 
                         <br />
 
-                        <divs.CompDivs ref="divs_comp" ext_ids={this.state.sel_ids} owner={this} />
+                        <divs.CompDivsTreeView ref="divs_comp" ext_ids={this.state.sel_ids} owner={this} />
 
-                    </jx.controls.BlackBlox>
+                    </jx.controls.BoxPanel>
 
                 </div>
 
@@ -53,7 +53,7 @@ export class CompOrg extends Views.ReactView {
                         {this.display_DivEntrView() }
                     </div>
                     <div className="edit-dep" style={{ padding: 0 }}>
-                        
+                        {this.display_DepartmentEntryView()}
                     </div>
                     
                 </div>
@@ -102,18 +102,24 @@ export class CompOrg extends Views.ReactView {
 
 
             case 'update_list': {
-                (this.refs["divs_comp"] as divs.CompDivs).update();
+                (this.refs["divs_comp"] as divs.CompDivsTreeView).update();
             } break;
 
 
             case 'add_depart': {
+
+                this.setState({
+                    entrymode: EntryMode.add_dep,
+                    div_id: data,
+                    sel_ids: selected_ids
+                } as CompOrgState);
                 
-                this.state.entrymode = EntryMode.add_dep;
+                //this.state.entrymode = EntryMode.add_dep;
 
-                ReactDOM.render(<deps.CompDepart owner={this} div_id={this.state.div_id}  />, this.root.find('.edit-dep')[0]);
+                //ReactDOM.render(<deps.CompDepartment owner={this} div_id={this.state.div_id}  />, this.root.find('.edit-dep')[0]);
 
-                this.root.find('.edit-mode').addClass('hidden');
-                this.root.find('.view-mode').removeClass('hidden');
+                //this.root.find('.edit-mode').addClass('hidden');
+                //this.root.find('.view-mode').removeClass('hidden');
 
             } break;
 
@@ -122,13 +128,19 @@ export class CompOrg extends Views.ReactView {
 
                 this.setState({
                     entrymode: EntryMode.edit_dep,
-                    div_id: data.div_id
+                    div_id: data,
+                    sel_ids: selected_ids
                 } as CompOrgState);
-                
-                this.root.find('.edit-mode').addClass('hidden');
-                this.root.find('.view-mode').removeClass('hidden');
 
-                ReactDOM.render(<deps.CompDepart owner={this} div_id={data.div_id} dept_id={data.dept_id}  />, this.root.find('.edit-dep')[0]);
+                //this.setState({
+                //    entrymode: EntryMode.edit_dep,
+                //    div_id: data.div_id
+                //} as CompOrgState);
+                
+                //this.root.find('.edit-mode').addClass('hidden');
+                //this.root.find('.view-mode').removeClass('hidden');
+
+                //ReactDOM.render(<deps.CompDepartment owner={this} div_id={data.div_id} dept_id={data.dept_id}  />, this.root.find('.edit-dep')[0]);
 
             } break;
 
@@ -150,22 +162,36 @@ export class CompOrg extends Views.ReactView {
             case EntryMode.add_div: {
                 props.mode = 'new';
             } break;
-
-
-            case EntryMode.edit_dep:
-            case EntryMode.add_dep:
+                
             case EntryMode.edit_div: {
                 props.mode = 'edit';
                 props.id = this.state.div_id;
             } break;
-
-            
 
         }
         
         if (props.mode) {            
             return <divs.CompDivsEdit  {...props} />
         }
+    }
+
+
+
+    display_DepartmentEntryView() {
+
+        var props: deps.CompDepartmentProps = {
+            div_id: null,
+            dept_id: null,            
+        }
+
+        switch (this.state.entrymode) {
+            
+            case EntryMode.edit_dep:
+            case EntryMode.add_dep: {
+                return <deps.CompDepartment  {...props} />    
+            }
+        }
+        
     }
 
 

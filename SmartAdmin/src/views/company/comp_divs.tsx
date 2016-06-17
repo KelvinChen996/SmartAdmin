@@ -14,18 +14,18 @@ var b: any = rb;
 import { Views, Types } from '../../lib/jx';
 
 
-interface CompDivsState extends Views.ReactState {
+interface CompDivsTreeViewState extends Views.ReactState {
 
 }
 
-export interface CompDivsProps extends Views.ReactProps {
+export interface CompDivsTreeViewProps extends Views.ReactProps {
     ext_ids?:any[]
 }
 
-export class CompDivs extends Views.ReactView {
+export class CompDivsTreeView extends Views.ReactView {
 
-    props: CompDivsProps;
-    state: CompDivsState;
+    props: CompDivsTreeViewProps;
+    state: CompDivsTreeViewState;
 
     divs_data: any[];
     depts_data: any[];
@@ -34,7 +34,7 @@ export class CompDivs extends Views.ReactView {
     selected_id: string;
 
 
-    constructor(props: CompDivsProps) {
+    constructor(props: CompDivsTreeViewProps) {
         super(props);
         this.divs_data = [];
         this.depts_data = [];
@@ -107,6 +107,19 @@ export class CompDivs extends Views.ReactView {
 
             this.edit_division(id);
         });
+
+
+        this.root.find('.btn-add-dept').off('click');
+        this.root.find('.btn-add-dept').click(e => {
+
+            e.preventDefault();
+
+            var divs_id = $(this).closest('.division').attr('data-id');
+
+            this.props.owner.notify('add_depart', divs_id);
+
+        });
+
 
         this.root.find('.btn-edit-dept').off('click');
         this.root.find('.btn-edit-dept').click(e => {
@@ -245,20 +258,25 @@ export class CompDivs extends Views.ReactView {
     }
     
 
-    load_departments(div:any) {
+    load_departments(div: any) {
+
+        var that = this;
 
         var depts: any[] = div['depts'];
 
         var html =
             <ol className="dd-list">
+
                 <li className="dd-item department dd-nodrag" data-id={utils.guid() }>
+
                     <div className="dd-handle dd-nodrag">
+
                         <div className="content-department">
 
                                 <span className="text-info"><strong>Departments</strong></span>
                             
                                 <span className="pull-right">
-                                    <a href="#" className="btn btn-info btn-xs btn-edit-dept"><i className="fa fa-plus"> {"add new"}</i></a>
+                                    <a href="#" className="btn btn-info btn-xs btn-add-dept"><i className="fa fa-plus"> {"add new"}</i></a>
                                 </span>
 
                             </div>    
@@ -295,7 +313,7 @@ export class CompDivs extends Views.ReactView {
 
         return html;
     }
-
+    
 
     init_actions() {
 
@@ -333,7 +351,7 @@ export class CompDivsEdit extends Views.ReactView {
         var html =
             <form className="animated fadeInRight" >
 
-                <jx.controls.BlackBlox title={mode} icon={<i className="fa fa-edit"></i>} >
+                <jx.controls.BoxPanel title={mode} box_color="blueLight" icon={<i className="fa fa-edit"></i>} >
 
                     <b.FormGroup controlId="formControlsText">
                         <jx.controls.BigLabel className="edit-mode" label="Division title" />
@@ -350,8 +368,7 @@ export class CompDivsEdit extends Views.ReactView {
                         </b.FormGroup>
 
                         <br />
-
-                        <button type="button" className="btn btn-info btn-add-dep" onClick={() => { this.add_dept(); } } style={{ marginLeft: 10 }}><i className="fa fa-plus"></i> {"Add department"}</button>
+                        
                         <button type="button" className="btn btn-danger pull-right btn-cancel" onClick={() => { this.cancel(); } } style={{ marginLeft: 10 }}><i className="fa fa-times"></i> Cancel</button>
                         <button type="button" className="btn btn-primary pull-right btn-save" onClick={() => { this.save(); } }><i className="fa fa-check"></i> Save</button>
 
@@ -361,7 +378,7 @@ export class CompDivsEdit extends Views.ReactView {
                     </div>
 
                     
-                </jx.controls.BlackBlox>
+                </jx.controls.BoxPanel>
 
             </form>;
             
@@ -369,13 +386,10 @@ export class CompDivsEdit extends Views.ReactView {
         return html;
     }
 
+    //<button type="button" className="btn btn-info btn-add-dep hidden" onClick={() => { this.add_dept(); } } style={{ marginLeft: 10 }}><i className="fa fa-plus"></i> {"Add department"}</button>
 
     componentDidMount() {
-
-        if (!this.props.id) {
-            this.root.find('.btn-add-dep').addClass('hidden');
-        }
-
+        
         if (this.state.loading) {
             this.load_data();
         }                

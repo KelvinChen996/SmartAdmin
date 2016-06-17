@@ -9,14 +9,14 @@ var __extends = (this && this.__extends) || function (d, b) {
 define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../../lib/jx'], function (require, exports, React, jx, rb, jx_1) {
     "use strict";
     var b = rb;
-    var CompDepart = (function (_super) {
-        __extends(CompDepart, _super);
-        function CompDepart(props) {
+    var CompDepartment = (function (_super) {
+        __extends(CompDepartment, _super);
+        function CompDepartment(props) {
             _super.call(this, props);
             this.state.loading = true;
             this.state.id = this.props.dept_id;
         }
-        CompDepart.prototype.render = function () {
+        CompDepartment.prototype.render = function () {
             var that = this;
             var title = 'Add new department';
             var icon = React.createElement("i", {className: "fa fa-plus-circle"});
@@ -24,26 +24,26 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
                 title = 'Edit department';
                 icon = React.createElement("i", {className: "fa fa-edit"});
             }
-            var html = React.createElement("div", {className: "col-lg-12 animated fadeInRight", style: { padding: 0 }}, React.createElement("br", null), React.createElement(jx.controls.BlackBlox, {title: title, icon: icon}, React.createElement("form", null, React.createElement(b.FormGroup, {controlId: "formControlsText"}, React.createElement(jx.controls.BigLabel, {label: "Department title"}), React.createElement(b.FormControl, {type: "text", "data-bind": "textInput:compdept_title", placeholder: "Enter a title"})), React.createElement(b.FormGroup, {controlId: "formControlsText"}, React.createElement(jx.controls.BigLabel, {label: "Department description"}), React.createElement("textarea", {rows: 3, id: "compdept_descr", "data-bind": "textInput:compdept_descr", className: "custom-scroll form-control"})), React.createElement("br", null), React.createElement("button", {type: "button", className: "btn btn-danger pull-right btn-cancel", onClick: function () { that.cancel(); }, style: { marginLeft: 10 }}, React.createElement("i", {className: "fa fa-times"}), " Cancel"), React.createElement("button", {type: "button", className: "btn btn-primary pull-right btn-save", onClick: function () { that.save(); }}, React.createElement("i", {className: "fa fa-check"}), " Save"), React.createElement("br", null))));
+            var html = React.createElement("div", {className: "col-lg-12 animated fadeInRight", style: { padding: 0 }}, React.createElement(jx.controls.BoxPanel, {title: title, box_color: "blueLight", icon: icon}, React.createElement("form", null, React.createElement(b.FormGroup, {controlId: "formControlsText"}, React.createElement(jx.controls.BigLabel, {label: "Department title"}), React.createElement(b.FormControl, {type: "text", "data-bind": "textInput:compdept_title", placeholder: "Enter a title"})), React.createElement(b.FormGroup, {controlId: "formControlsText"}, React.createElement(jx.controls.BigLabel, {label: "Department description"}), React.createElement("textarea", {rows: 3, id: "compdept_descr", "data-bind": "textInput:compdept_descr", className: "custom-scroll form-control"})), React.createElement("br", null), React.createElement("button", {type: "button", className: "btn btn-danger pull-right btn-cancel", onClick: function () { that.cancel(); }, style: { marginLeft: 10 }}, React.createElement("i", {className: "fa fa-times"}), " Cancel"), React.createElement("button", {type: "button", className: "btn btn-primary pull-right btn-save", onClick: function () { that.save(); }}, React.createElement("i", {className: "fa fa-check"}), " Save"), React.createElement("br", null))));
             return html;
         };
-        Object.defineProperty(CompDepart.prototype, "isNew", {
+        Object.defineProperty(CompDepartment.prototype, "isNew", {
             get: function () {
                 return !this.state.id;
             },
             enumerable: true,
             configurable: true
         });
-        CompDepart.prototype.componentDidMount = function () {
+        CompDepartment.prototype.componentDidMount = function () {
             if (this.state.loading) {
                 this.load_data();
             }
         };
-        CompDepart.prototype.componentDidUpdate = function () {
-            ko.cleanNode(this.root[0]);
-            ko.applyBindings(this.item, this.root[0]);
+        CompDepartment.prototype.componentDidUpdate = function () {
+            //ko.cleanNode(this.root[0]);
+            //ko.applyBindings(this.item, this.root[0]);
         };
-        CompDepart.prototype.load_data = function () {
+        CompDepartment.prototype.load_data = function () {
             var _this = this;
             utils.spin(this.root);
             var model = Backendless.Persistence.of('compdivs');
@@ -61,13 +61,6 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
                     that.item = ko['mapping'].fromJS(dept);
                 }
                 else {
-                    var obj = _.extend(new CompDept(), {
-                        ___class: 'compdept',
-                        compdivs_id: _this.div_obj['objectId'],
-                        compdept_title: '',
-                        compdept_descr: ''
-                    });
-                    _this.item = ko['mapping'].fromJS(obj);
                 }
                 utils.unspin(_this.root);
                 _this.setState({
@@ -77,7 +70,7 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
             }));
             return d.promise;
         };
-        CompDepart.prototype.save = function () {
+        CompDepartment.prototype.save = function () {
             var _this = this;
             if (this.isNew) {
                 this.add_new_div().then(function () {
@@ -90,7 +83,7 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
                 this.save_div();
             }
         };
-        CompDepart.prototype.save_div = function () {
+        CompDepartment.prototype.save_div = function () {
             var _this = this;
             var obj = ko['mapping'].toJS(this.item);
             utils.spin(this.root);
@@ -104,7 +97,7 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
                 toastr.error(err['message']);
             }));
         };
-        CompDepart.prototype.add_new_div = function () {
+        CompDepartment.prototype.add_new_div = function () {
             var _this = this;
             var model = Backendless.Persistence.of('compdivs');
             var obj = ko['mapping'].toJS(this.item);
@@ -125,14 +118,14 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
             }));
             return d.promise;
         };
-        CompDepart.prototype.cancel = function () {
+        CompDepartment.prototype.cancel = function () {
             this.setState({
                 loading: true
             });
         };
-        return CompDepart;
+        return CompDepartment;
     }(jx_1.Views.ReactView));
-    exports.CompDepart = CompDepart;
+    exports.CompDepartment = CompDepartment;
     var CompDept = (function () {
         function CompDept() {
         }

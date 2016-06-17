@@ -16,16 +16,16 @@ import { Views, Types } from '../../lib/jx';
 
 
 
-export interface CompDepartProps extends Views.ReactProps {
+export interface CompDepartmentProps extends Views.ReactProps {
     div_id: string,
     dept_id?: string
 }
-export interface CompDepartState extends Views.ReactState {
+export interface CompDepartmentState extends Views.ReactState {
     id: string
 }
-export class CompDepart extends Views.ReactView {
+export class CompDepartment extends Views.ReactView {
 
-    constructor(props: CompDepartProps) {
+    constructor(props: CompDepartmentProps) {
         super(props);
         this.state.loading = true;
         this.state.id = this.props.dept_id;
@@ -33,8 +33,8 @@ export class CompDepart extends Views.ReactView {
 
     div_obj: any;
     item: any;
-    props: CompDepartProps;
-    state: CompDepartState;
+    props: CompDepartmentProps;
+    state: CompDepartmentState;
 
     render() {
 
@@ -50,10 +50,8 @@ export class CompDepart extends Views.ReactView {
 
         var html =
             <div className="col-lg-12 animated fadeInRight" style={{ padding:0 }}>
-
-                <br />
-
-                <jx.controls.BlackBlox title={title} icon={icon} >                    
+                
+                <jx.controls.BoxPanel title={title} box_color="blueLight" icon={icon} >                    
                     
                     <form>
 
@@ -75,7 +73,7 @@ export class CompDepart extends Views.ReactView {
                         <br/>
 
                     </form>
-                </jx.controls.BlackBlox>
+                </jx.controls.BoxPanel>
 
             </div>;
 
@@ -99,8 +97,8 @@ export class CompDepart extends Views.ReactView {
 
     componentDidUpdate() {
 
-        ko.cleanNode(this.root[0]);
-        ko.applyBindings(this.item, this.root[0]);
+        //ko.cleanNode(this.root[0]);
+        //ko.applyBindings(this.item, this.root[0]);
     }
 
 
@@ -134,14 +132,14 @@ export class CompDepart extends Views.ReactView {
 
             } else {
 
-                var obj = _.extend(new CompDept(), {
-                    ___class:'compdept',
-                    compdivs_id: this.div_obj['objectId'],
-                    compdept_title: '',
-                    compdept_descr: ''
-                });
+                //var obj = _.extend(new CompDept(), {
+                //    ___class:'compdept',
+                //    compdivs_id: this.div_obj['objectId'],
+                //    compdept_title: '',
+                //    compdept_descr: ''
+                //});
 
-                this.item = ko['mapping'].fromJS(obj);
+                //this.item = ko['mapping'].fromJS(obj);
                 
             }
             

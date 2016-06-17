@@ -253,18 +253,25 @@ define(["require", "exports", 'react', 'react-dom'], function (require, exports,
     })(Application = exports.Application || (exports.Application = {}));
     var controls;
     (function (controls) {
-        var BlackBlox = (function (_super) {
-            __extends(BlackBlox, _super);
-            function BlackBlox() {
-                _super.apply(this, arguments);
+        var BoxPanel = (function (_super) {
+            __extends(BoxPanel, _super);
+            function BoxPanel(props) {
+                _super.call(this, props);
+                this.init_default_state();
             }
-            BlackBlox.prototype.render = function () {
-                var html = React.createElement("div", {className: "jarviswidget jarviswidget-color-white", "data-widget-attstyle": "jarviswidget-color-white", "data-widget-editbutton": "false"}, React.createElement("header", null, React.createElement("span", {className: "widget-icon"}, " ", this.props.icon, " "), React.createElement("h2", null, this.props.title)), React.createElement("div", {style: { paddingBottom: 20 }}, React.createElement("div", {className: "jarviswidget-editbox"}), React.createElement("div", {className: "widget-body no-padding"}, React.createElement("div", {className: "col-lg-12"}, this.props.children))));
+            BoxPanel.prototype.init_default_state = function () {
+                _.extend(this.state, {
+                    box_color: !this.props.box_color ? 'white' : this.props.box_color
+                });
+            };
+            //blueLight
+            BoxPanel.prototype.render = function () {
+                var html = React.createElement("div", {className: "jarviswidget jarviswidget-color-{0}".format(this.state.box_color), "data-widget-attstyle": "jarviswidget-color-{0}".format(this.state.box_color), "data-widget-editbutton": "false"}, React.createElement("header", null, React.createElement("span", {className: "widget-icon"}, " ", this.props.icon, " "), React.createElement("h2", null, this.props.title)), React.createElement("div", {style: { paddingBottom: 20 }}, React.createElement("div", {className: "jarviswidget-editbox"}), React.createElement("div", {className: "widget-body no-padding"}, React.createElement("div", {className: "col-lg-12"}, this.props.children))));
                 return html;
             };
-            return BlackBlox;
+            return BoxPanel;
         }(Views.ReactView));
-        controls.BlackBlox = BlackBlox;
+        controls.BoxPanel = BoxPanel;
         var BigLabel = (function (_super) {
             __extends(BigLabel, _super);
             function BigLabel(props) {
