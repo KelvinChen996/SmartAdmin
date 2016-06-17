@@ -7,27 +7,26 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../../lib/jx'], function (require, exports, React, jx, rb, jx_1) {
-    "use strict";
     var b = rb;
-    var CompDivsTreeView = (function (_super) {
-        __extends(CompDivsTreeView, _super);
-        function CompDivsTreeView(props) {
+    var CompDivs = (function (_super) {
+        __extends(CompDivs, _super);
+        function CompDivs(props) {
             _super.call(this, props);
             this.divs_data = [];
             this.depts_data = [];
             this.state.loading = true;
         }
-        CompDivsTreeView.prototype.render = function () {
-            var html = React.createElement("div", {style: { minHeight: 350 }}, React.createElement("button", {className: "btn btn-primary btn-addnew"}, React.createElement("i", {className: "fa fa-plus-circle", "aria-hidden": "true"}), " Add new division"), React.createElement("hr", null), React.createElement("div", {className: "tree-view"}, React.createElement("div", {className: "dd"}, React.createElement("ol", {className: "dd-list"}, this.build_treelist()))));
+        CompDivs.prototype.render = function () {
+            var html = React.createElement("div", {"style": { minHeight: 350 }}, React.createElement("button", {"className": "btn btn-primary btn-addnew"}, React.createElement("i", {"className": "fa fa-plus-circle", "aria-hidden": "true"}), " Add new division"), React.createElement("hr", null), React.createElement("div", {"className": "tree-view"}, React.createElement("div", {"className": "dd"}, React.createElement("ol", {"className": "dd-list"}, this.build_treelist()))));
             return html;
         };
-        CompDivsTreeView.prototype.componentDidMount = function () {
+        CompDivs.prototype.componentDidMount = function () {
             this.init_actions();
             if (this.state.loading) {
                 this.load_divs_data();
             }
         };
-        CompDivsTreeView.prototype.componentDidUpdate = function () {
+        CompDivs.prototype.componentDidUpdate = function () {
             if (this.state.loading) {
                 this.load_divs_data();
             }
@@ -35,23 +34,19 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
                 this.init_view();
             }
         };
-        CompDivsTreeView.prototype.init_view = function () {
+        CompDivs.prototype.init_view = function () {
             var _this = this;
             if (this.divs_data.length > 0) {
                 this['nestable'] = this.root.find('.tree-view > .dd')['nestable']().nestable('collapseAll');
             }
-            this.root.find('.dd-item .href-div-title').click(function (e) {
+            this.root.find('.dd-item').off('hover');
+            this.root.find('.dd-item').off('click');
+            this.root.find('.dd-item .btn-edit').click(function (e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 var id = $(e.currentTarget).closest('.dd-item').attr('data-id');
                 _this.highlight_selection(id);
                 _this.edit_division(id);
-            });
-            this.root.find('.btn-add-dept').off('click');
-            this.root.find('.btn-add-dept').click(function (e) {
-                e.preventDefault();
-                var divs_id = $(_this).closest('.division').attr('data-id');
-                _this.props.owner.notify('add_depart', divs_id);
             });
             this.root.find('.btn-edit-dept').off('click');
             this.root.find('.btn-edit-dept').click(function (e) {
@@ -65,35 +60,34 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
                 this.highlight_selection(this.selected_id);
                 this.selected_id = null;
             }
-            if (this.props.ext_ids) {
-                var plugin = this.root.find('.tree-view > .dd').data('nestable');
-                _.each(this.props.ext_ids, function (id) {
-                    var li = _this.root.find('[data-id="{0}"]'.format(id));
-                    plugin.expandItem(li);
-                });
-            }
         };
-        CompDivsTreeView.prototype.update = function () {
+        CompDivs.prototype.update = function () {
             this.selected_id = this.root.find('.selected').closest('.dd-item').attr('data-id');
             this.setState({
                 loading: true
             });
         };
-        CompDivsTreeView.prototype.highlight_selection = function (id) {
+        CompDivs.prototype.highlight_selection = function (id) {
             this.root.find('.selected').removeClass('selected');
+            this.root.find('.icon-select').addClass('hidden');
             var li = this.root.find('[data-id="{0}"]'.format(id));
             li.find('.dd-handle').first().addClass('selected');
+            li.find('.icon-select').removeClass('hidden');
+            //if (!$(li).hasClass('dd-collapsed')) {
+            //    var plugin = this.root.find('.tree-view > .dd').data('nestable');
+            //    plugin.expandItem(li);
+            //}        
         };
-        CompDivsTreeView.prototype.edit_division = function (id) {
+        CompDivs.prototype.edit_division = function (id) {
             this.props.owner.notify('edit-division', id);
         };
-        CompDivsTreeView.prototype.edit_department = function (div_id, dept_id) {
+        CompDivs.prototype.edit_department = function (div_id, dept_id) {
             this.props.owner.notify('edit-department', {
                 div_id: div_id,
                 dept_id: dept_id
             });
         };
-        CompDivsTreeView.prototype.load_divs_data = function () {
+        CompDivs.prototype.load_divs_data = function () {
             var _this = this;
             var model = Backendless.Persistence.of('compdivs');
             var qry = new Backendless.DataQuery();
@@ -117,34 +111,36 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
             }));
             return d.promise;
         };
-        CompDivsTreeView.prototype.build_treelist = function () {
+        CompDivs.prototype.build_treelist = function () {
             var _this = this;
             var count = 1;
             var nodes = _.map(this.divs_data, function (d) {
-                var item = React.createElement("li", {className: "dd-item division", "data-id": d['objectId'], style: { cursor: 'pointer', }}, React.createElement("div", {className: "dd-handle dd-nodrag"}, React.createElement("div", {className: "content"}, React.createElement("h4", {className: "text-primary"}, React.createElement("span", {className: "semi-bold"}, React.createElement("a", {href: "#", className: "href-div-title", style: { fontSize: 23 }}, d['compdiv_title']))), React.createElement("span", {className: "text-muted"}, React.createElement("small", null, d['compdiv_descr'])))), _this.load_departments(d));
+                var item = React.createElement("li", {"className": "dd-item division", "data-id": d['objectId'], "style": { cursor: 'pointer', }}, React.createElement("div", {"className": "dd-handle dd-nodrag"}, React.createElement("div", {"className": "content"}, React.createElement("h4", {"className": "text-primary"}, React.createElement("span", {"className": "semi-bold"}, d['compdiv_title']), React.createElement("span", {"className": "pull-right text-muted"})), React.createElement("span", {"className": "text-muted"}, React.createElement("small", null, d['compdiv_descr'])), React.createElement("span", {"className": "pull-right"}, React.createElement("a", {"href": "#", "className": "text-primary btn-edit"}, React.createElement("i", {"className": "fa fa-edit"}), " edit")))), _this.load_departments(d));
                 return item;
             });
             return nodes;
         };
-        CompDivsTreeView.prototype.load_departments = function (div) {
-            var that = this;
+        CompDivs.prototype.load_departments = function (div) {
             var depts = div['depts'];
-            var html = React.createElement("ol", {className: "dd-list"}, React.createElement("li", {className: "dd-item department dd-nodrag", "data-id": utils.guid()}, React.createElement("div", {className: "dd-handle dd-nodrag"}, React.createElement("div", {className: "content-department"}, React.createElement("span", {className: "text-info"}, React.createElement("strong", null, "Departments")), React.createElement("span", {className: "pull-right"}, React.createElement("a", {href: "#", className: "btn btn-info btn-xs btn-add-dept"}, React.createElement("i", {className: "fa fa-plus"}, " ", "add new")))))), _.map(depts, function (dep) {
-                var li = React.createElement("li", {className: "dd-item department dd-nodrag", "data-id": dep['objectId']}, React.createElement("div", {className: "dd-handle dd-nodrag"}, React.createElement("div", {className: "content-department"}, React.createElement("h4", {className: "text-primary", style: { fontSize: 23 }}, React.createElement("span", {className: "semi-bold"}, dep['compdept_title'])), React.createElement("span", {className: "text-muted"}, dep['compdept_descr']), React.createElement("span", {className: "pull-right hidden"}, React.createElement("a", {href: "#", className: "text-primary btn-edit-dept"}, React.createElement("i", {className: "fa fa-pencil"}), " edit")))));
+            if (!depts || depts.length === 0) {
+                return;
+            }
+            var html = React.createElement("ol", {"className": "dd-list"}, _.map(depts, function (dep) {
+                var li = React.createElement("li", {"className": "dd-item department dd-nodrag", "data-id": dep['objectId']}, React.createElement("div", {"className": "dd-handle dd-nodrag"}, React.createElement("div", {"className": "content-department"}, React.createElement("h4", {"className": "text-primary"}, React.createElement("span", {"className": "semi-bold"}, dep['compdept_title'])), React.createElement("span", {"className": "text-muted"}, dep['compdept_descr']), React.createElement("span", {"className": "pull-right"}, React.createElement("a", {"href": "#", "className": "text-primary btn-edit-dept"}, React.createElement("i", {"className": "fa fa-pencil"}), " edit")))));
                 return li;
             }));
             return html;
         };
-        CompDivsTreeView.prototype.init_actions = function () {
+        CompDivs.prototype.init_actions = function () {
             var _this = this;
             this.root.find('.btn-addnew').off('click');
             this.root.find('.btn-addnew').click(function () {
                 _this.props.owner.notify('add-new-division');
             });
         };
-        return CompDivsTreeView;
-    }(jx_1.Views.ReactView));
-    exports.CompDivsTreeView = CompDivsTreeView;
+        return CompDivs;
+    })(jx_1.Views.ReactView);
+    exports.CompDivs = CompDivs;
     var CompDivsEdit = (function (_super) {
         __extends(CompDivsEdit, _super);
         function CompDivsEdit(props) {
@@ -157,11 +153,13 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
             if (this.props.mode === 'new') {
                 mode = 'Add new division';
             }
-            var html = React.createElement("form", {className: "animated fadeInRight"}, React.createElement(jx.controls.BoxPanel, {title: mode, box_color: "blueLight", icon: React.createElement("i", {className: "fa fa-edit"})}, React.createElement(b.FormGroup, {controlId: "formControlsText"}, React.createElement(jx.controls.BigLabel, {className: "edit-mode", label: "Division title"}), React.createElement(b.FormControl, {type: "text", "data-bind": "textInput:compdiv_title", className: "edit-mode", id: "compdiv_title", placeholder: "Enter a title"}), React.createElement("p", {"data-bind": "text:compdiv_title", className: "view-mode hidden", style: { marginTop: 10, fontSize: 32, fontWeight: 100 }}), React.createElement("p", {"data-bind": "text:compdiv_descr", className: "view-mode text-muted hidden", style: { marginTop: 10, fontSize: 32, fontWeight: 100 }})), React.createElement("div", {className: "edit-mode"}, React.createElement(b.FormGroup, {controlId: "formControlsText"}, React.createElement(jx.controls.BigLabel, {label: "Division description"}), React.createElement("textarea", {rows: 3, id: "compdiv_descr", "data-bind": "textInput:compdiv_descr", className: "custom-scroll form-control"})), React.createElement("br", null), React.createElement("button", {type: "button", className: "btn btn-danger pull-right btn-cancel", onClick: function () { _this.cancel(); }, style: { marginLeft: 10 }}, React.createElement("i", {className: "fa fa-times"}), " Cancel"), React.createElement("button", {type: "button", className: "btn btn-primary pull-right btn-save", onClick: function () { _this.save(); }}, React.createElement("i", {className: "fa fa-check"}), " Save"), React.createElement("br", null))));
+            var html = React.createElement("form", {"className": "animated fadeInRight"}, React.createElement(jx.controls.BlackBlox, {"title": mode, "icon": React.createElement("i", {"className": "fa fa-edit"})}, React.createElement(b.FormGroup, {"controlId": "formControlsText"}, React.createElement(jx.controls.BigLabel, {"className": "edit-mode", "label": "Division title"}), React.createElement(b.FormControl, {"type": "text", "data-bind": "textInput:compdiv_title", "className": "edit-mode", "id": "compdiv_title", "placeholder": "Enter a title"}), React.createElement("p", {"data-bind": "text:compdiv_title", "className": "view-mode hidden", "style": { marginTop: 10, fontSize: 32, fontWeight: 100 }}), React.createElement("p", {"data-bind": "text:compdiv_descr", "className": "view-mode text-muted hidden", "style": { marginTop: 10, fontSize: 32, fontWeight: 100 }})), React.createElement("div", {"className": "edit-mode"}, React.createElement(b.FormGroup, {"controlId": "formControlsText"}, React.createElement(jx.controls.BigLabel, {"label": "Division description"}), React.createElement("textarea", {"rows": 3, "id": "compdiv_descr", "data-bind": "textInput:compdiv_descr", "className": "custom-scroll form-control"})), React.createElement("br", null), React.createElement("button", {"type": "button", "className": "btn btn-info btn-add-dep", "onClick": function () { _this.add_dept(); }, "style": { marginLeft: 10 }}, React.createElement("i", {"className": "fa fa-plus"}), " ", "Add department"), React.createElement("button", {"type": "button", "className": "btn btn-danger pull-right btn-cancel", "onClick": function () { _this.cancel(); }, "style": { marginLeft: 10 }}, React.createElement("i", {"className": "fa fa-times"}), " Cancel"), React.createElement("button", {"type": "button", "className": "btn btn-primary pull-right btn-save", "onClick": function () { _this.save(); }}, React.createElement("i", {"className": "fa fa-check"}), " Save"), React.createElement("br", null))));
             return html;
         };
-        //<button type="button" className="btn btn-info btn-add-dep hidden" onClick={() => { this.add_dept(); } } style={{ marginLeft: 10 }}><i className="fa fa-plus"></i> {"Add department"}</button>
         CompDivsEdit.prototype.componentDidMount = function () {
+            if (!this.props.id) {
+                this.root.find('.btn-add-dep').addClass('hidden');
+            }
             if (this.state.loading) {
                 this.load_data();
             }
@@ -248,12 +246,12 @@ define(["require", "exports", 'react', '../../lib/jx', 'react-bootstrap', '../..
             return d.promise;
         };
         return CompDivsEdit;
-    }(jx_1.Views.ReactView));
+    })(jx_1.Views.ReactView);
     exports.CompDivsEdit = CompDivsEdit;
     var CompDiv = (function () {
         function CompDiv() {
         }
         return CompDiv;
-    }());
+    })();
 });
-//# sourceMappingURL=F:/StampDev/SmartAdmin/SmartAdmin/js/views/company/comp_divs.js.map
+//# sourceMappingURL=C:/StampDev/SmartAdmin/SmartAdmin/js/views/company/comp_divs.js.map
