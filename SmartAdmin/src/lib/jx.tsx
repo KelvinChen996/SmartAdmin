@@ -484,7 +484,8 @@ export module controls {
     export interface BigLabelProps extends React.HTMLProps<any> {
         label?: string,
         lang?: string,
-        require?: boolean
+        require?: boolean,
+        inline?: boolean
     }
     export class BigLabel extends Views.ReactView {
 
@@ -498,8 +499,21 @@ export module controls {
 
         render() {
 
-            var html = <div className="breadcrumb-wrapper" {...this.props}>
-                <p className="label-value" style={{ fontSize: 32, fontWeight: 100 }}>{this.format_label() }{this.is_required() }</p>
+            var p_style:any = {
+                fontSize: 32,
+                fontWeight: 100
+            }
+
+            var label_style:any = {
+            }
+            
+            if (this.props.inline) {
+                label_style.display = 'inline-block';                
+                p_style.display = 'inline-block';
+            }
+
+            var html = <div className="breadcrumb-wrapper biglabel" {...this.props} style={label_style}>
+                <p className="label-value" style={p_style}>{this.format_label() }{this.is_required() }</p>
             </div>;
 
             return html;

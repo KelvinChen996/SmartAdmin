@@ -1,4 +1,4 @@
-﻿/// <reference path="comp_divs.tsx" />
+﻿/// <reference path="comp_divs_treeview.tsx" />
 /// <reference path="comp_dept.tsx" />
 // A '.tsx' file enables JSX support in the TypeScript compiler, 
 // for more information see the following page on the TypeScript wiki:
@@ -8,7 +8,7 @@
 import React = require('react');
 import ReactDOM = require('react-dom');
 import jx = require('../../lib/jx');
-import divs = require('./comp_divs');
+import divs = require('./comp_divs_treeview');
 import deps = require('./comp_dept');
 
 
@@ -87,14 +87,11 @@ export class CompOrg extends Views.ReactView {
     
     notify(cmd: string, data?: any): Q.Promise<any> {
 
-        //if (this.skip) {
-        //    this.skip = false;
-        //    return;
-        //}
 
-        //this.skip = true;
+        if (cmd != 'update_list') {
+            ReactDOM.unmountComponentAtNode(this.root.find('.dataentry')[0]);
+        }
 
-        ReactDOM.unmountComponentAtNode(this.root.find('.dataentry')[0]);
 
         switch (cmd) {
 

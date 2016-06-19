@@ -22,3 +22,9 @@
   border: 1px solid #FAA937;
   color: #333 !important;
 }
+
+
+.dd-handle.dept-selected {  
+  border: 1px solid #ff0000;
+  color: #333 !important;
+}

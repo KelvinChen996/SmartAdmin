@@ -98,6 +98,7 @@
     <Content Include="fonts\summernote.eot" />
     <Content Include="fonts\summernote.ttf" />
     <Content Include="fonts\summernote.woff" />
+    <Content Include="js\jquery.bootstrap-pureClearButton.js" />
     <Content Include="js\knockout-3.debug.js" />
     <Content Include="js\ko.mapping.js" />
     <Content Include="js\libs\jquery-2.1.1.min.map" />
@@ -605,7 +606,7 @@
     <TypeScriptCompile Include="src\lib\jx.tsx" />
     <TypeScriptCompile Include="src\lib\utils.ts" />
     <TypeScriptCompile Include="src\views\company\comp_dept.tsx" />
-    <TypeScriptCompile Include="src\views\company\comp_divs.tsx" />
+    <TypeScriptCompile Include="src\views\company\comp_divs_treeview.tsx" />
     <TypeScriptCompile Include="src\views\company\comp_org.tsx" />
     <TypeScriptCompile Include="src\views\company\explorer.tsx" />
     <TypeScriptCompile Include="src\views\home\homepage.tsx" />

@@ -47,7 +47,9 @@ export class CompDepartment extends Views.ReactView {
 
     render() {
 
-        this.state.dept_id = this.props.dept_id;
+        if (this.reload_state != ReloadState.reloading) {
+            this.state.dept_id = this.props.dept_id;
+        }
 
         var that = this;
 
@@ -59,11 +61,12 @@ export class CompDepartment extends Views.ReactView {
             icon = <i className="fa fa-edit"></i>;
         }
 
+        var can_add_emps = this.isNew ? 'hidden' : null;
 
         var html =
             <div className="col-lg-12 animated fadeInRight" style={{ padding: 0 }}>
                 
-                <jx.controls.BoxPanel title={title} box_color="blueLight" icon={icon} >                    
+                <jx.controls.BoxPanel title={title} box_color="blueLight" icon={icon}>
                     
                     <form>
 
@@ -79,18 +82,38 @@ export class CompDepartment extends Views.ReactView {
 
                         <br />
 
+                        <button type="button" className={"btn btn-primary btn-add-emps {0}".format(can_add_emps) } onClick={() => { that.add_employees() } }><i className="fa fa-user"></i> Add employee</button>
                         <button type="button" className="btn btn-danger pull-right btn-cancel" onClick={() => { that.cancel() } } style={{ marginLeft: 10 }}><i className="fa fa-times"></i> Cancel</button>
                         <button type="button" className="btn btn-primary pull-right btn-save" onClick={() => { that.save() } }><i className="fa fa-check"></i> Save</button>
 
                         <br/>
 
                     </form>
-                </jx.controls.BoxPanel>
 
+                    
+                    {this.display_emplistview()}
+                    
+                    
+
+                </jx.controls.BoxPanel>
+                
             </div>;
 
         return html;
     }    
+
+
+    display_emplistview() {
+
+        if (!this.isNew) {
+
+            return <div>
+                        <hr />
+                        <EmplistView ref="emplist" />
+                    </div>
+        }
+
+    }
 
 
     get isNew(): boolean {
@@ -112,46 +135,10 @@ export class CompDepartment extends Views.ReactView {
 
     componentDidUpdate() {
 
-
+        if (this.reload_state === ReloadState.reloading) {
+            this.reload_state = ReloadState.none;
+        }
     }
-
-
-
-    //componentDidMount() {
-        
-    //    if (this.state.loading) {
-
-    //        ko.cleanNode(this.root[0]);
-
-    //        this.reload_state = ReloadState.reloading;
-
-    //        this.load_data().then(() => {
-    //            this.reload_state = ReloadState.none;
-    //            ko.applyBindings(this.item, this.root[0]);
-    //        });
-    //    }
-    //}
-
-
-    //componentDidUpdate() {
-
-    //    if (this.reload_state === ReloadState.reloading) {
-    //        this.reload_state = ReloadState.none;
-    //        return;
-    //    }
-        
-    //    ko.cleanNode(this.root[0]);
-
-    //    this.reload_state = ReloadState.reloading;
-
-    //    this.load_data().then(() => {
-
-    //        this.reload_state = ReloadState.none;
-
-    //        ko.applyBindings(this.item, this.root[0]);
-
-    //    });        
-    //}
 
 
     load_data() {
@@ -214,6 +201,8 @@ export class CompDepartment extends Views.ReactView {
 
             this.add_new_div().then(() => {
 
+                this.reload_state = ReloadState.reloading;
+
                 this.setState({
                     loading: true
                 });
@@ -221,7 +210,15 @@ export class CompDepartment extends Views.ReactView {
 
         } else {
 
-            this.save_div()
+            this.save_div().then(() => {
+
+                this.reload_state = ReloadState.reloading;
+
+                this.setState({
+                    loading: true
+                });
+
+            });
         }
     }
 
@@ -234,8 +231,11 @@ export class CompDepartment extends Views.ReactView {
 
         var model = Backendless.Persistence.of('compdept');
 
+        var d = Q.defer();
 
         model.save(obj, new Backendless.Async(res => {
+
+            this.state.dept_id = res['objectId'];
 
             toastr.success('Data saved successfully');
 
@@ -243,14 +243,19 @@ export class CompDepartment extends Views.ReactView {
 
             this.props.owner.notify('update_list');
 
+            d.resolve(true);
+
         }, err => {
 
             utils.unspin(this.root);
 
             toastr.error(err['message']);
 
+            d.reject(false);
+
         }));
 
+        return d.promise;
     }
 
 
@@ -259,9 +264,7 @@ export class CompDepartment extends Views.ReactView {
         var model = Backendless.Persistence.of('compdivs');
         
         var obj = ko['mapping'].toJS(this.item);
-
-        //obj['compdivs_id'] = this.props.div_id;       
-        //obj['___class'] = 'compdept';
+        
 
         obj['compdept_title'] = this.root.find('[data-bind="textInput:compdept_title"]').val();
         obj['compdept_descr'] = this.root.find('[data-bind="textInput:compdept_descr"]').val();
@@ -297,6 +300,13 @@ export class CompDepartment extends Views.ReactView {
     }
 
 
+    add_employees() {
+
+        (this.refs['emplist'] as EmplistView).add_mail_control();
+
+    }
+
+
     cancel() {
 
         this.setState({
@@ -305,9 +315,113 @@ export class CompDepartment extends Views.ReactView {
     }
 }
 
+
 class CompDept {
     
     compdivs_id: string
     compdept_descr: string
     compdept_title: string
+}
+
+
+
+interface EmplistViewprops extends jx.Views.ReactProps {
+    isnew?: boolean
+}
+class EmplistView extends jx.Views.ReactView {
+
+    props: EmplistViewprops;
+
+    constructor(props: EmplistViewprops) {
+        super(props);        
+    }
+
+    /*
+
+                    
+    */
+
+
+    render() {
+        
+        var html =
+            <div className="emplist-root">
+                
+                <div className={"row" }>
+
+                    <div className="col-lg-12">
+
+                        <jx.controls.BigLabel label="Employees" inline={true} />
+                        <button className="btn btn-warning pull-right edit-mode hidden"><i className="fa fa-times" aria-hidden="true"></i> Cancel</button>
+                        <button className="btn btn-primary pull-right edit-mode hidden" style={{ marginRight: 10 }}><i className="fa fa-envelope-o" aria-hidden="true"></i> Send</button>
+                        
+                    </div>
+
+                </div>
+
+                <div className="col-lg-12 edit-mode hidden">
+                    <br />
+                    <div className="alert alert-block alert-success" style={{ borderLeftWidth:'5px!important' }}>
+                        <h4 className="alert-heading">
+                            Add employee
+                        </h4>
+                        <p>{'Enter an invitation mail and press send. Press agaim "Add employee" to add more employees'}</p>
+                    </div>
+                    <br />
+                </div>
+
+
+                <div className="emps-list">
+
+                </div>
+            </div>
+
+        return html;
+
+    }
+
+
+    add_mail_control() {
+
+        var root = $('<div></div>').appendTo(this.root.find('.emps-list'));
+
+        this.root.find('.edit-mode').removeClass('hidden');
+
+        ReactDOM.render(<EmailControl />, root[0]);
+
+    }
+
+}
+
+
+class EmailControl extends jx.Views.ReactView {
+
+    render() {
+
+        var html =
+            <form className="text-clear smart-form">
+                <fieldset style={{ paddingTop:0 }}>
+                    <label className="input">
+                        <i className="icon-append fa fa-times btn-icon"></i>
+                        <input type="email" name="email" placeholder="Enter an invitation email"/>
+                    </label>
+                </fieldset>                
+            </form>
+
+
+        return html;
+    }
+
+
+    componentDidMount() {
+
+        this.root.find('.btn-icon').click(e => {
+
+            e.preventDefault();
+
+            alert('bingo');
+        });
+
+        //this.root.find('.glyphicon').css('margin-top', '5px');
+    }
 }

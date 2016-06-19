@@ -145,7 +145,8 @@ export class CompDivsTreeView extends Views.ReactView {
 
             var id = $(e.currentTarget).closest('.dd-item').attr('data-id');
 
-            this.highlight_selection(id);
+            this.highlight_comp_division(id);
+            this.higlight_comp_dept(null);
 
             this.edit_division(id);
         });
@@ -159,6 +160,8 @@ export class CompDivsTreeView extends Views.ReactView {
             
             var divs_id = $(e.currentTarget).closest('.division').attr('data-id');
 
+            this.highlight_comp_division(divs_id);
+
             this.props.owner.notify('add_depart', divs_id);
 
         });
@@ -171,14 +174,17 @@ export class CompDivsTreeView extends Views.ReactView {
             e.stopImmediatePropagation();
 
             var dept_id = $(e.currentTarget).closest('.department').attr('data-id');
-            var div_id = $(e.currentTarget).closest('.division').attr('data-id');
+            var divs_id = $(e.currentTarget).closest('.division').attr('data-id');
 
-            this.edit_department(div_id, dept_id);
+            this.highlight_comp_division(divs_id);
+            this.higlight_comp_dept(dept_id);
+
+            this.edit_department(divs_id, dept_id);
         });
 
         
         if (this.selected_id) {
-            this.highlight_selection(this.selected_id);
+            this.highlight_comp_division(this.selected_id);
             this.selected_id = null;
         }
 
@@ -208,7 +214,7 @@ export class CompDivsTreeView extends Views.ReactView {
     }
 
 
-    highlight_selection(id: string) {
+    highlight_comp_division(id: string) {
 
         this.root.find('.selected').removeClass('selected');
         
@@ -216,6 +222,17 @@ export class CompDivsTreeView extends Views.ReactView {
 
         li.find('.dd-handle').first().addClass('selected');
         
+    }
+
+
+    higlight_comp_dept(id: string) {
+
+        this.root.find('.dept-selected').removeClass('dept-selected');
+
+        var li = this.root.find('[data-id="{0}"]'.format(id));
+
+        li.find('.dd-handle').first().addClass('dept-selected');
+
     }
 
 
