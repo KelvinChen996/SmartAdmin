@@ -15,28 +15,39 @@ var b: any = rb;
 import { Views, Types } from '../../lib/jx';
 
 
+enum ReloadState { none, reloading, has_reloaded }
 
 export interface CompDepartmentProps extends Views.ReactProps {
     div_id: string,
-    dept_id?: string
+    dept_id?: string,
+    reload?: boolean
 }
 export interface CompDepartmentState extends Views.ReactState {
-    id: string
+    dept_id: string
 }
 export class CompDepartment extends Views.ReactView {
 
     constructor(props: CompDepartmentProps) {
         super(props);
+
         this.state.loading = true;
-        this.state.id = this.props.dept_id;
+        this.state.dept_id = this.props.dept_id;
+
+        this.reload_state = ReloadState.none;
+    
     }
 
     div_obj: any;
     item: any;
     props: CompDepartmentProps;
     state: CompDepartmentState;
+    
+    reload_state: ReloadState;
+
 
     render() {
+
+        this.state.dept_id = this.props.dept_id;
 
         var that = this;
 
@@ -48,8 +59,9 @@ export class CompDepartment extends Views.ReactView {
             icon = <i className="fa fa-edit"></i>;
         }
 
+
         var html =
-            <div className="col-lg-12 animated fadeInRight" style={{ padding:0 }}>
+            <div className="col-lg-12 animated fadeInRight" style={{ padding: 0 }}>
                 
                 <jx.controls.BoxPanel title={title} box_color="blueLight" icon={icon} >                    
                     
@@ -82,24 +94,64 @@ export class CompDepartment extends Views.ReactView {
 
 
     get isNew(): boolean {
-        return !this.state.id;
+        return !this.state.dept_id;
 
     }
 
 
     componentDidMount() {
 
-        if (this.state.loading) {
-            this.load_data()
-        }
+        ko.cleanNode(this.root[0]);
+
+        this.load_data().then(() => {
+
+            ko.applyBindings(this.item, this.root[0]);
+        });
     }
 
 
     componentDidUpdate() {
 
-        //ko.cleanNode(this.root[0]);
-        //ko.applyBindings(this.item, this.root[0]);
+
     }
+
+
+
+    //componentDidMount() {
+        
+    //    if (this.state.loading) {
+
+    //        ko.cleanNode(this.root[0]);
+
+    //        this.reload_state = ReloadState.reloading;
+
+    //        this.load_data().then(() => {
+    //            this.reload_state = ReloadState.none;
+    //            ko.applyBindings(this.item, this.root[0]);
+    //        });
+    //    }
+    //}
+
+
+    //componentDidUpdate() {
+
+    //    if (this.reload_state === ReloadState.reloading) {
+    //        this.reload_state = ReloadState.none;
+    //        return;
+    //    }
+        
+    //    ko.cleanNode(this.root[0]);
+
+    //    this.reload_state = ReloadState.reloading;
+
+    //    this.load_data().then(() => {
+
+    //        this.reload_state = ReloadState.none;
+
+    //        ko.applyBindings(this.item, this.root[0]);
+
+    //    });        
+    //}
 
 
     load_data() {
@@ -118,11 +170,13 @@ export class CompDepartment extends Views.ReactView {
 
         var d = Q.defer();
 
+        var that = this;
+
         model.find(qry, new Backendless.Async((res: any) => {
 
             this.div_obj = res.data[0];
 
-            if (!this.isNew) {
+            if (!that.isNew) {
 
                 var dept = _.find(res.data[0].depts, dep => {
                     return dep['objectId'] === this.props.dept_id;
@@ -132,23 +186,19 @@ export class CompDepartment extends Views.ReactView {
 
             } else {
 
-                //var obj = _.extend(new CompDept(), {
-                //    ___class:'compdept',
-                //    compdivs_id: this.div_obj['objectId'],
-                //    compdept_title: '',
-                //    compdept_descr: ''
-                //});
+                var obj = _.extend(new CompDept(), {
+                    ___class:'compdept',
+                    compdivs_id: this.div_obj['objectId'],
+                    compdept_title: '',
+                    compdept_descr: ''
+                });
 
-                //this.item = ko['mapping'].fromJS(obj);
+                this.item = ko['mapping'].fromJS(obj);
                 
             }
             
             utils.unspin(this.root);
-
-            this.setState({
-                loading: false
-            });
-
+            
             d.resolve(that.item);
 
         }));
@@ -191,7 +241,7 @@ export class CompDepartment extends Views.ReactView {
 
             utils.unspin(this.root);
 
-            //this.props.owner.notify('update_list');
+            this.props.owner.notify('update_list');
 
         }, err => {
 
@@ -207,9 +257,12 @@ export class CompDepartment extends Views.ReactView {
     add_new_div() {
 
         var model = Backendless.Persistence.of('compdivs');
-
-        var obj = ko['mapping'].toJS(this.item);
         
+        var obj = ko['mapping'].toJS(this.item);
+
+        //obj['compdivs_id'] = this.props.div_id;       
+        //obj['___class'] = 'compdept';
+
         obj['compdept_title'] = this.root.find('[data-bind="textInput:compdept_title"]').val();
         obj['compdept_descr'] = this.root.find('[data-bind="textInput:compdept_descr"]').val();
 
@@ -223,9 +276,11 @@ export class CompDepartment extends Views.ReactView {
 
             toastr.success('Data saved successfully');
 
-            this.state.id = res['objectId'];
+            this.state.dept_id = res['objectId'];
 
             utils.unspin(this.root);
+
+            this.props.owner.notify('update_list');
 
             d.resolve(true);
 

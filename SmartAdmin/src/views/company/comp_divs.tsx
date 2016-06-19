@@ -15,35 +15,59 @@ import { Views, Types } from '../../lib/jx';
 
 
 interface CompDivsTreeViewState extends Views.ReactState {
-
+    reloading: boolean,
+    ext_ids: string[]
 }
 
 export interface CompDivsTreeViewProps extends Views.ReactProps {
-    ext_ids?:any[]
+    ext_ids?: any[],
+    reload?: boolean
 }
+
+enum ReloadState { none, reloading, has_reloaded }
 
 export class CompDivsTreeView extends Views.ReactView {
 
     props: CompDivsTreeViewProps;
     state: CompDivsTreeViewState;
-
+    
     divs_data: any[];
     depts_data: any[];
 
     datatable: any;
     selected_id: string;
+    reload_state: ReloadState;
+
 
 
     constructor(props: CompDivsTreeViewProps) {
         super(props);
         this.divs_data = [];
         this.depts_data = [];
-
+        
+        this.reload_state = ReloadState.none;
         this.state.loading = true;
     }
 
 
     render() {
+
+        if (this.props.reload) {
+
+            if (this.reload_state === ReloadState.none) {
+
+                this.reload_state = ReloadState.reloading;
+            }
+
+
+            if (this.reload_state == ReloadState.reloading) {
+
+                this.state.loading = true;
+
+            }
+            
+        }
+
 
         var html =
             <div style={{ minHeight: 350 }}>
@@ -67,7 +91,7 @@ export class CompDivsTreeView extends Views.ReactView {
     componentDidMount() {
 
         this.init_actions();
-
+        
         if (this.state.loading)
         {
             this.load_divs_data();
@@ -77,15 +101,33 @@ export class CompDivsTreeView extends Views.ReactView {
 
     componentDidUpdate() {
 
-        if (this.state.loading) {
+        if (this.props.reload) {
 
-            this.load_divs_data();
+            if (this.reload_state == ReloadState.reloading) {
+
+                this.reload_state = ReloadState.has_reloaded;
+
+                this.load_divs_data();
+
+            } else {
+
+                this.reload_state = ReloadState.none;
+
+                this.init_view();
+            }
+
 
         } else {
 
-            this.init_view();
-        }
+            if (this.state.loading) {
 
+                this.load_divs_data();
+
+            } else {
+
+                this.init_view();
+            }
+        }
         
     }
 
@@ -113,17 +155,18 @@ export class CompDivsTreeView extends Views.ReactView {
         this.root.find('.btn-add-dept').click(e => {
 
             e.preventDefault();
-
-            var divs_id = $(this).closest('.division').attr('data-id');
+            e.stopImmediatePropagation();
+            
+            var divs_id = $(e.currentTarget).closest('.division').attr('data-id');
 
             this.props.owner.notify('add_depart', divs_id);
 
         });
 
 
-        this.root.find('.btn-edit-dept').off('click');
-        this.root.find('.btn-edit-dept').click(e => {
-
+        this.root.find('.content-department').off('click');
+        this.root.find('.content-department').click(e => {
+            
             e.preventDefault();
             e.stopImmediatePropagation();
 
@@ -133,30 +176,32 @@ export class CompDivsTreeView extends Views.ReactView {
             this.edit_department(div_id, dept_id);
         });
 
+        
         if (this.selected_id) {
             this.highlight_selection(this.selected_id);
             this.selected_id = null;
         }
 
-        if (this.props.ext_ids) {
+        if (this.state.ext_ids) {
 
             var plugin = this.root.find('.tree-view > .dd').data('nestable');
 
-            _.each(this.props.ext_ids, id => {
+            _.each(this.state.ext_ids, id => {
 
                 var li = this.root.find('[data-id="{0}"]'.format(id));
 
                 plugin.expandItem(li); 
             });
-
         }
     }
 
 
-    update() {
+    update(extended_ids: string[]) {
 
         this.selected_id = this.root.find('.selected').closest('.dd-item').attr('data-id');
-        
+
+        this.state.ext_ids = extended_ids;
+
         this.setState({
             loading: true
         });
@@ -208,7 +253,7 @@ export class CompDivsTreeView extends Views.ReactView {
             utils.unspin(this.root);
 
             this.setState({
-                loading: false
+                loading: false                
             });
 
             d.resolve(true);
@@ -239,9 +284,9 @@ export class CompDivsTreeView extends Views.ReactView {
                 <li className="dd-item division" data-id={d['objectId']} style={{ cursor: 'pointer', }}>
                     <div className="dd-handle dd-nodrag">
                         <div className="content">
-                            <h4 className="text-primary">
+                            <h4 className="text-primary href-div-title">
                                 <span className="semi-bold">
-                                    <a href="#" className="href-div-title" style={{ fontSize: 23 }}>{d['compdiv_title']}</a>
+                                    <a href="#" className="" style={{ fontSize: 23 }}>{d['compdiv_title']}</a>
                                 </span>
                             </h4>
                             <span className="text-muted"><small>{d['compdiv_descr']}</small></span>
@@ -271,7 +316,7 @@ export class CompDivsTreeView extends Views.ReactView {
 
                     <div className="dd-handle dd-nodrag">
 
-                        <div className="content-department">
+                        <div className="">
 
                                 <span className="text-info"><strong>Departments</strong></span>
                             
@@ -295,11 +340,7 @@ export class CompDivsTreeView extends Views.ReactView {
                                         <h4 className="text-primary" style={{ fontSize: 23 }}><span className="semi-bold">{dep['compdept_title']}</span></h4>
 
                                         <span className="text-muted">{dep['compdept_descr']}</span>
-
-                                        <span className="pull-right hidden">
-                                            <a href="#" className="text-primary btn-edit-dept"><i className="fa fa-pencil"></i> edit</a>
-                                        </span>
-
+                                        
                                     </div>
                                     
                                 </div>
@@ -401,6 +442,7 @@ export class CompDivsEdit extends Views.ReactView {
         if (this.props.mode === 'new') {
 
             this.add_new_div()
+
         } else {
 
             this.save_div();
@@ -478,6 +520,8 @@ export class CompDivsEdit extends Views.ReactView {
             toastr.success('Data saved successfully');
 
             utils.unspin(this.root);
+
+            this.props.owner.notify('update_list');
 
         }, err => {
 

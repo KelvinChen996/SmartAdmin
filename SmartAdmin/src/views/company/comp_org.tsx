@@ -20,14 +20,22 @@ export enum EntryMode { none, add_div, edit_div, add_dep, edit_dep }
 interface CompOrgState extends Views.ReactState {
     entrymode?: EntryMode,
     div_id?: string,
-    sel_ids?: any[]
+    dept_id?: string,
+    sel_ids?: any[],
+    reload_tree?: boolean
 }
 export class CompOrg extends Views.ReactView {
 
     state: CompOrgState;
-
+    skip: boolean;
 
     render() {
+
+        var reload = this.state.reload_tree;
+
+        if (reload) {
+            this.state.reload_tree = false;
+        }
 
         var html =
             <div className="col-lg-12">
@@ -42,106 +50,122 @@ export class CompOrg extends Views.ReactView {
 
                         <br />
 
-                        <divs.CompDivsTreeView ref="divs_comp" ext_ids={this.state.sel_ids} owner={this} />
+                        <divs.CompDivsTreeView ref="divs_comp" ext_ids={this.state.sel_ids} reload={reload} owner={this} />
 
                     </jx.controls.BoxPanel>
 
                 </div>
 
-                <div className="col-lg-6">
-                    <div className="col-lg-12 edit-div" style={{ padding:0 }}>
-                        {this.display_DivEntrView() }
-                    </div>
-                    <div className="edit-dep" style={{ padding: 0 }}>
-                        {this.display_DepartmentEntryView()}
-                    </div>
+                <div className="col-lg-6 dataentry">
                     
                 </div>
-
+                
             </div>;
 
         return html;
     }    
+
+
+    get_expanded_node_ids() {
+
+        var expand_list = [];
+
+        _.each(this.root.find('.dd-item.division'), el => {
+
+            if (!$(el).hasClass('dd-collapsed')) {
+                expand_list.push(el);
+            }
+        });
+        
+        var selected_ids = _.map(expand_list, el => {
+            return $(el).attr('data-id');
+        });
+
+        return selected_ids;
+    }
     
     
     notify(cmd: string, data?: any): Q.Promise<any> {
-        
-        ReactDOM.unmountComponentAtNode(this.root.find('.edit-dep')[0]);
+
+        //if (this.skip) {
+        //    this.skip = false;
+        //    return;
+        //}
+
+        //this.skip = true;
+
+        ReactDOM.unmountComponentAtNode(this.root.find('.dataentry')[0]);
 
         switch (cmd) {
 
             case 'add-new-division': {
-                
-                this.setState({
-                    entrymode: EntryMode.add_div
-                } as CompOrgState);
+
+                this.state.entrymode = EntryMode.add_div;
+
+                ReactDOM.render(this.display_DivEntrView(), this.root.find('.dataentry')[0]);
+
             } break;
 
             case 'edit-division': {
-
-                var expnd_list = [];
-
-                _.each(this.root.find('.dd-item.division'), el => {
-
-                    if (!$(el).hasClass('dd-collapsed')) {
-                        expnd_list.push(el);
-                    }
-                });
                 
+                var selected_ids = this.get_expanded_node_ids();
 
-                var selected_ids = _.map(expnd_list, el => {
-                    return $(el).attr('data-id');
-                });
-                
-                this.setState({
+                _.extend(this.state, {
                     entrymode: EntryMode.edit_div,
                     div_id: data,
                     sel_ids: selected_ids
-                } as CompOrgState);
+                });
+
+                ReactDOM.render(this.display_DivEntrView(), this.root.find('.dataentry')[0]);
+
+
             } break;
 
 
             case 'update_list': {
-                (this.refs["divs_comp"] as divs.CompDivsTreeView).update();
+
+                var ext_id = this.root.find('.selected').closest('.dd-item').attr('data-id');
+
+                var ids: string[] = null;
+
+                if (ext_id) {
+                    ids = [ext_id];
+                }
+
+                (this.refs['divs_comp'] as divs.CompDivsTreeView).update(ids);
+                
             } break;
 
 
             case 'add_depart': {
 
-                this.setState({
+                var selected_ids = this.get_expanded_node_ids();
+
+                _.extend(this.state, {
                     entrymode: EntryMode.add_dep,
                     div_id: data,
+                    dept_id: null,
                     sel_ids: selected_ids
-                } as CompOrgState);
+                });
                 
-                //this.state.entrymode = EntryMode.add_dep;
-
-                //ReactDOM.render(<deps.CompDepartment owner={this} div_id={this.state.div_id}  />, this.root.find('.edit-dep')[0]);
-
-                //this.root.find('.edit-mode').addClass('hidden');
-                //this.root.find('.view-mode').removeClass('hidden');
-
+                ReactDOM.render(this.display_DepartmentEntryView(), this.root.find('.dataentry')[0]);
+                
             } break;
 
 
             case 'edit-department': {
 
-                this.setState({
+                var selected_ids = this.get_expanded_node_ids();
+
+                _.extend(this.state, {
                     entrymode: EntryMode.edit_dep,
-                    div_id: data,
+                    div_id: data.div_id,
+                    dept_id: data.dept_id,
                     sel_ids: selected_ids
-                } as CompOrgState);
+                });
 
-                //this.setState({
-                //    entrymode: EntryMode.edit_dep,
-                //    div_id: data.div_id
-                //} as CompOrgState);
+                ReactDOM.render(this.display_DepartmentEntryView(), this.root.find('.dataentry')[0]);
                 
-                //this.root.find('.edit-mode').addClass('hidden');
-                //this.root.find('.view-mode').removeClass('hidden');
-
-                //ReactDOM.render(<deps.CompDepartment owner={this} div_id={data.div_id} dept_id={data.dept_id}  />, this.root.find('.edit-dep')[0]);
-
             } break;
 
         }
@@ -174,20 +198,23 @@ export class CompOrg extends Views.ReactView {
             return <divs.CompDivsEdit  {...props} />
         }
     }
-
-
+    
 
     display_DepartmentEntryView() {
-
+        
         var props: deps.CompDepartmentProps = {
-            div_id: null,
-            dept_id: null,            
+            div_id: this.state.div_id,
+            dept_id: this.state.dept_id,
+            owner: this                
         }
-
+        
         switch (this.state.entrymode) {
             
             case EntryMode.edit_dep:
             case EntryMode.add_dep: {
+                
+                this.state.entrymode = EntryMode.none;
+
                 return <deps.CompDepartment  {...props} />    
             }
         }
