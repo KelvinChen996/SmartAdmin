@@ -148,6 +148,8 @@ export class CompDivsTreeView extends Views.ReactView {
             this.highlight_comp_division(id);
             this.higlight_comp_dept(null);
 
+            this.display_arrow($(e.currentTarget));
+
             this.edit_division(id);
         });
 
@@ -179,6 +181,8 @@ export class CompDivsTreeView extends Views.ReactView {
             this.highlight_comp_division(divs_id);
             this.higlight_comp_dept(dept_id);
 
+            this.display_arrow($(e.currentTarget));
+
             this.edit_department(divs_id, dept_id);
         });
 
@@ -199,6 +203,13 @@ export class CompDivsTreeView extends Views.ReactView {
                 plugin.expandItem(li); 
             });
         }
+    }
+
+
+    display_arrow($el) {
+
+        this.root.find('.fa-arrow-right').addClass('hidden');
+        $el.find('.fa-arrow-right').removeClass('hidden');
     }
 
 
@@ -305,6 +316,7 @@ export class CompDivsTreeView extends Views.ReactView {
                                 <span className="semi-bold">
                                     <a href="#" className="" style={{ fontSize: 23 }}>{d['compdiv_title']}</a>
                                 </span>
+                                <span className="fa fa-arrow-right pull-right text-danger hidden"></span>
                             </h4>
                             <span className="text-muted"><small>{d['compdiv_descr']}</small></span>
                             
@@ -340,7 +352,7 @@ export class CompDivsTreeView extends Views.ReactView {
                                 <span className="pull-right">
                                     <a href="#" className="btn btn-info btn-xs btn-add-dept"><i className="fa fa-plus"> {"add new"}</i></a>
                                 </span>
-
+                                
                             </div>    
                     </div>
                 </li>
@@ -354,7 +366,10 @@ export class CompDivsTreeView extends Views.ReactView {
 
                                     <div className="content-department">
 
-                                        <h4 className="text-primary" style={{ fontSize: 23 }}><span className="semi-bold">{dep['compdept_title']}</span></h4>
+                                        <h4 className="text-primary" style={{ fontSize: 23 }}>
+                                            <span className="semi-bold">{dep['compdept_title']}</span>
+                                            <span className="fa fa-arrow-right pull-right text-danger hidden"></span>
+                                        </h4>
 
                                         <span className="text-muted">{dep['compdept_descr']}</span>
                                         
@@ -387,53 +402,78 @@ export interface CompDivsEditProps extends Views.ReactProps {
     mode?: string,
     id?: string
 }
+
+enum OpenMode { add, edit }
+
+interface CompDivsEditState extends Views.ReactState {
+    openmode: OpenMode
+}
 export class CompDivsEdit extends Views.ReactView {
 
     item: any;
     props: CompDivsEditProps;
+    state: CompDivsEditState;
     
     constructor(props: CompDivsEditProps) {
         super(props);
+
         this.state.loading = true;
+        this.state.openmode = OpenMode.edit;
+
+        if (this.props.mode === 'new') {
+            this.state.openmode = OpenMode.add;
+        }
     }
 
 
     render() {
 
-        var mode = 'Edit division';
+        var that = this;
 
-        if (this.props.mode === 'new') {
+        var mode = 'Company division';
+
+        if (this.state.openmode === OpenMode.add) {
             mode = 'Add new division';
         }    
         
         var html =
             <form className="animated fadeInRight" >
-
+                
                 <jx.controls.BoxPanel title={mode} box_color="blueLight" icon={<i className="fa fa-edit"></i>} >
 
+                    <b.Row style={{ paddingTop: 30 }}>
+                        <b.Col xs={12}>
+                            <jx.controls.BigLabel label="Company division" inline={true} />
+                            <a href="#" className="text-primary pull-right view-mode btn-edit" onClick={(e) => { e.preventDefault(); that.enter_editmode() } } style={{ fontSize: 18, marginTop:5 }}><i className="fa fa-edit"></i> edit</a>
+                            <a href="#" className="text-danger pull-right edit-mode hidden btn-cancel" onClick={(e) => { e.preventDefault(); that.cancel_editmode() } } style={{ fontSize: 18, marginLeft: 20, marginTop: 5 }}><i className="fa fa-times"></i> cancel</a>
+                            <a href="#" className="text-primary pull-right edit-mode hidden btn-save" onClick={(e) => { e.preventDefault(); that.save() } } style={{ fontSize: 18, marginTop: 5 }}><i className="fa fa-check"></i> save</a>
+                        </b.Col>                        
+                    </b.Row>
+
+                    <hr/>
+
                     <b.FormGroup controlId="formControlsText">
-                        <jx.controls.BigLabel className="edit-mode" label="Division title" />
-                        <b.FormControl type="text" data-bind="textInput:compdiv_title" className="edit-mode" id="compdiv_title" placeholder="Enter a title" />
-                        <p data-bind="text:compdiv_title" className="view-mode hidden" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>
-                        <p data-bind="text:compdiv_descr" className="view-mode text-muted hidden" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>
+                        <jx.controls.BigLabel label="Title" />
+                        <b.FormControl type="text" data-bind="textInput:compdiv_title" style={{ height: 50, fontSize:20}}
+                            className="edit-mode hidden" id="compdiv_title" placeholder="Enter a title" />
+                        <p data-bind="text:compdiv_title" className="view-mode" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>                        
                     </b.FormGroup>
 
-                    <div className="edit-mode">
+                    <br/>
 
-                        <b.FormGroup controlId="formControlsText">
-                            <jx.controls.BigLabel label="Division description" />
-                            <textarea rows={3} id="compdiv_descr" data-bind="textInput:compdiv_descr" className="custom-scroll form-control" />
-                        </b.FormGroup>
+                    <b.FormGroup controlId="formControlsText">
+                        <jx.controls.BigLabel label="Description" />
+                        <textarea rows={3} id="compdiv_descr" style={{ fontSize: 20 }}
+                            data-bind="textInput:compdiv_descr" className="custom-scroll edit-mode hidden form-control" />
+                        <p data-bind="text:compdiv_descr" className="view-mode" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>
+                    </b.FormGroup>
 
-                        <br />
-                        
-                        <button type="button" className="btn btn-danger pull-right btn-cancel" onClick={() => { this.cancel(); } } style={{ marginLeft: 10 }}><i className="fa fa-times"></i> Cancel</button>
-                        <button type="button" className="btn btn-primary pull-right btn-save" onClick={() => { this.save(); } }><i className="fa fa-check"></i> Save</button>
+                    <br />
 
-                        <br/>
+                    <button type="button" className="btn btn-danger pull-right btn-cancel hidden" onClick={() => { this.cancel(); } } style={{ marginLeft: 10 }}><i className="fa fa-times"></i> Cancel</button>
+                    <button type="button" className="btn btn-primary pull-right btn-save hidden" onClick={() => { this.save(); } }><i className="fa fa-check"></i> Save</button>
 
-
-                    </div>
+                    <br/>
 
                     
                 </jx.controls.BoxPanel>
@@ -447,22 +487,51 @@ export class CompDivsEdit extends Views.ReactView {
     //<button type="button" className="btn btn-info btn-add-dep hidden" onClick={() => { this.add_dept(); } } style={{ marginLeft: 10 }}><i className="fa fa-plus"></i> {"Add department"}</button>
 
     componentDidMount() {
-        
+
         if (this.state.loading) {
             this.load_data();
         }                
     }
 
 
+    cancel_editmode() {
+
+        this.exit_editmode();
+    }
+
+
+    exit_editmode() {
+
+        this.root.find('.view-mode').removeClass('hidden');
+
+        this.root.find('.edit-mode').addClass('hidden');
+    }
+
+
+    enter_editmode() {
+
+        this.root.find('.view-mode').addClass('hidden');
+
+        this.root.find('.edit-mode').removeClass('hidden');
+    }
+
+    
     save() {
 
         if (this.props.mode === 'new') {
 
-            this.add_new_div()
+            this.add_new_div().then(() => {
+
+                this.exit_editmode();
+            });
 
         } else {
 
-            this.save_div();
+            this.save_div().then(() => {
+
+                this.exit_editmode();
+
+            });
         }
     }
 
@@ -503,6 +572,8 @@ export class CompDivsEdit extends Views.ReactView {
 
         var model = Backendless.Persistence.of('compdivs');
 
+        var d = Q.defer();
+
         model.save(obj, new Backendless.Async(res => {
 
             toastr.success('Data saved successfully');
@@ -511,14 +582,18 @@ export class CompDivsEdit extends Views.ReactView {
 
             this.props.owner.notify('update_list');
 
+            d.resolve(true);
+
         }, err => {
 
             utils.unspin(this.root);
 
             toastr.error(err['message']);
 
+            d.reject(false);
         }));
 
+        return d.promise;
     }
 
 
@@ -532,6 +607,8 @@ export class CompDivsEdit extends Views.ReactView {
 
         utils.spin(this.root);
 
+        var d = Q.defer();
+
         model.save(obj, new Backendless.Async(res => {
 
             toastr.success('Data saved successfully');
@@ -540,14 +617,19 @@ export class CompDivsEdit extends Views.ReactView {
 
             this.props.owner.notify('update_list');
 
+            d.resolve(true);
+
         }, err => {
 
             utils.unspin(this.root);
 
             toastr.error(err['message']);
 
+            d.reject(false);
+
         }));
 
+        return d.promise;
     }
 
 

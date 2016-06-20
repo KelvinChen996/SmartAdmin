@@ -57,7 +57,7 @@ export class CompDepartment extends Views.ReactView {
         var icon = <i className="fa fa-plus-circle"></i>;
 
         if (!this.isNew) {
-            title = 'Edit department';
+            title = 'Company department';
             icon = <i className="fa fa-edit"></i>;
         }
 

@@ -424,7 +424,7 @@ export module controls {
         box_color: string
     }
 
-    export interface BoxPanelProps extends Views.ReactProps {
+    export interface BoxPanelProps extends React.HTMLProps<any> {
         icon?:any,
         title?: string,
         box_color?: string
@@ -449,8 +449,10 @@ export module controls {
         //blueLight
         render() {
 
+            var __props: any = this.props;
+
             var html =
-                <div className={"jarviswidget jarviswidget-color-{0}".format(this.state.box_color) }
+                <div className={"jarviswidget jarviswidget-color-{0}".format(this.state.box_color) } {...__props}
                     data-widget-attstyle={"jarviswidget-color-{0}".format(this.state.box_color)} data-widget-editbutton="false">
 
                     <header>
@@ -513,7 +515,7 @@ export module controls {
             }
 
             var html = <div className="breadcrumb-wrapper biglabel" {...this.props} style={label_style}>
-                <p className="label-value" style={p_style}>{this.format_label() }{this.is_required() }</p>
+                <p className="label-value text-muted" style={p_style}>{this.format_label() }{this.is_required() }</p>
             </div>;
 
             return html;
