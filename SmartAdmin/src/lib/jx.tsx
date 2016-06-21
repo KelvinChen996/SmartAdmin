@@ -5,6 +5,8 @@
 
 import React = require('react');
 import ReactDOM = require('react-dom');
+import rb = require('react-bootstrap');
+var b: any = rb;
 
 
 var __router_ctx: any;
@@ -479,9 +481,7 @@ export module controls {
         }
 
     }
-
-
-
+    
 
     export interface BigLabelProps extends React.HTMLProps<any> {
         label?: string,
@@ -540,4 +540,37 @@ export module controls {
         
     }
 
+
+    export interface EditActionsProps extends React.HTMLProps<any> {
+        title?: string
+    }
+    export class EditActions extends Views.ReactView {
+
+        props: EditActionsProps;
+
+        constructor(props: EditActionsProps) {
+            super(props);
+        }
+
+        render() {
+
+            var html =
+                <b.Row>
+                    <b.Col lg={12}>
+                        
+                    </b.Col>
+                </b.Row>
+
+
+            return html;
+
+        }
+
+
+        componentDidMount() {
+
+            
+
+        }
+    }
 }

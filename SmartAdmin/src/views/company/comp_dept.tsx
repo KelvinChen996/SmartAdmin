@@ -22,8 +22,12 @@ export interface CompDepartmentProps extends Views.ReactProps {
     dept_id?: string,
     reload?: boolean
 }
+
+enum OpenMode { none, add, edit }
+
 export interface CompDepartmentState extends Views.ReactState {
-    dept_id: string
+    dept_id: string,
+    openmode: OpenMode
 }
 export class CompDepartment extends Views.ReactView {
 
@@ -32,6 +36,7 @@ export class CompDepartment extends Views.ReactView {
 
         this.state.loading = true;
         this.state.dept_id = this.props.dept_id;
+        this.state.openmode = OpenMode.none;
 
         this.reload_state = ReloadState.none;
     
@@ -59,6 +64,8 @@ export class CompDepartment extends Views.ReactView {
         if (!this.isNew) {
             title = 'Company department';
             icon = <i className="fa fa-edit"></i>;
+        } else {
+            this.state.openmode = OpenMode.add;
         }
 
         var can_add_emps = this.isNew ? 'hidden' : null;
@@ -67,30 +74,42 @@ export class CompDepartment extends Views.ReactView {
             <div className="col-lg-12 animated fadeInRight" style={{ padding: 0 }}>
                 
                 <jx.controls.BoxPanel title={title} box_color="blueLight" icon={icon}>
-                    
+
                     <form>
 
-                        <b.FormGroup controlId="formControlsText">
-                            <jx.controls.BigLabel label="Department title" />
-                            <b.FormControl type="text" data-bind="textInput:compdept_title" placeholder="Enter a title" />                            
-                        </b.FormGroup>
+                        <b.Row style={{ paddingTop: 30 }}>
+                            <b.Col xs={12}>
+                                <jx.controls.BigLabel label="Company department" inline={true} />
+                                <button href="#" className="btn btn-primary pull-right view-mode hidden btn-edit" onClick={(e) => { e.preventDefault(); that['enter_editmode']() } } style={{ marginTop: 5 }}><i className="fa fa-edit"></i> edit</button>
+                                <button href="#" className="btn btn-danger pull-right edit-mode btn-cancel" onClick={(e) => { e.preventDefault(); that['cancel_editmode']() } } style={{ marginLeft: 10, marginTop: 5 }}><i className="fa fa-times"></i> cancel</button>
+                                <button href="#" className="btn btn-primary pull-right edit-mode btn-save" onClick={(e) => { e.preventDefault(); that.save() } } style={{ marginTop: 5 }}><i className="fa fa-check"></i> save</button>
+                            </b.Col>
+                        </b.Row>
+
+                        <hr />
 
                         <b.FormGroup controlId="formControlsText">
-                            <jx.controls.BigLabel label="Department description" />
-                            <textarea rows={3} id="compdept_descr" data-bind="textInput:compdept_descr" className="custom-scroll form-control" />
+                            <jx.controls.BigLabel label="Title" />
+                            <b.FormControl type="text" className="edit-mode" style={{ height: 50, fontSize: 20 }}
+                                data-bind="textInput:compdept_title" placeholder="Enter a title" />  
+                            <p data-bind="text:compdept_title" className="view-mode hidden" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>     
                         </b.FormGroup>
 
                         <br />
 
-                        <button type="button" className={"btn btn-primary btn-add-emps {0}".format(can_add_emps) } onClick={() => { that.add_employees() } }><i className="fa fa-user"></i> Add employee</button>
-                        <button type="button" className="btn btn-danger pull-right btn-cancel" onClick={() => { that.cancel() } } style={{ marginLeft: 10 }}><i className="fa fa-times"></i> Cancel</button>
-                        <button type="button" className="btn btn-primary pull-right btn-save" onClick={() => { that.save() } }><i className="fa fa-check"></i> Save</button>
-
-                        <br/>
-
+                        <b.FormGroup controlId="formControlsText">
+                            <jx.controls.BigLabel label="Description" />                            
+                            <textarea rows={3} id="compdept_descr" style={{ fontSize: 20 }}
+                                data-bind="textInput:compdept_descr" className="custom-scroll form-control edit-mode" />
+                            <p data-bind="text:compdept_descr" className="view-mode hidden" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>
+                        </b.FormGroup>
+                        
                     </form>
 
-                    
+                    <br/>
+
+                    <hr />
+
                     {this.display_emplistview()}
                     
                     
@@ -107,10 +126,7 @@ export class CompDepartment extends Views.ReactView {
 
         if (!this.isNew) {
 
-            return <div>
-                        <hr />
-                        <EmplistView ref="emplist" />
-                    </div>
+            return <EmplistView ref="emplist" />
         }
 
     }
@@ -128,6 +144,10 @@ export class CompDepartment extends Views.ReactView {
 
         this.load_data().then(() => {
 
+            if (this.state.openmode != OpenMode.none) {
+                this.enter_editmode();
+            }
+
             ko.applyBindings(this.item, this.root[0]);
         });
     }
@@ -138,6 +158,32 @@ export class CompDepartment extends Views.ReactView {
         if (this.reload_state === ReloadState.reloading) {
             this.reload_state = ReloadState.none;
         }
+
+        if (this.state.openmode != OpenMode.none) {
+            this.enter_editmode();
+        }
+    }
+
+
+    cancel_editmode() {
+
+        this.exit_editmode();
+    }
+
+
+    exit_editmode() {
+
+        //this.root.find('.view-mode').removeClass('hidden');
+
+        //this.root.find('.edit-mode').addClass('hidden');
+    }
+
+
+    enter_editmode() {
+
+        //this.root.find('.view-mode').addClass('hidden');
+
+        //this.root.find('.edit-mode').removeClass('hidden');
     }
 
 
@@ -204,7 +250,8 @@ export class CompDepartment extends Views.ReactView {
                 this.reload_state = ReloadState.reloading;
 
                 this.setState({
-                    loading: true
+                    loading: true,
+                    openmode: OpenMode.none
                 });
             });
 
@@ -215,7 +262,8 @@ export class CompDepartment extends Views.ReactView {
                 this.reload_state = ReloadState.reloading;
 
                 this.setState({
-                    loading: true
+                    loading: true,
+                    openmode: OpenMode.none
                 });
 
             });
@@ -336,12 +384,6 @@ class EmplistView extends jx.Views.ReactView {
         super(props);        
     }
 
-    /*
-
-                    
-    */
-
-
     render() {
         
         var html =
@@ -351,21 +393,23 @@ class EmplistView extends jx.Views.ReactView {
 
                     <div className="col-lg-12">
 
-                        <jx.controls.BigLabel label="Employees" inline={true} />
+                        <jx.controls.BigLabel label="Employees" />
+                        <br />
+                        <button type="button" className="btn btn-primary btn-add-emps" onClick={() => { this.add_mail_control() } }><i className="fa fa-user"></i> Add employees</button>
                         <button className="btn btn-warning pull-right edit-mode hidden"><i className="fa fa-times" aria-hidden="true"></i> Cancel</button>
-                        <button className="btn btn-primary pull-right edit-mode hidden" style={{ marginRight: 10 }}><i className="fa fa-envelope-o" aria-hidden="true"></i> Send</button>
+                        <button className="btn btn-primary pull-right edit-mode hidden" onClick={() => { this.send_emails() } } style={{ marginRight: 10 }}><i className="fa fa-envelope-o" aria-hidden="true"></i> Send</button>
                         
                     </div>
 
                 </div>
 
-                <div className="col-lg-12 edit-mode hidden">
+                <div className="row edit-mode hidden" style={{ paddingLeft: 10, paddingRight:20 }}>
                     <br />
-                    <div className="alert alert-block alert-success" style={{ borderLeftWidth:'5px!important' }}>
+                    <div className="alert alert-block alert-warning" style={{ borderLeftWidth:'5px!important' }}>
                         <h4 className="alert-heading">
-                            Add employee
+                            Add employees
                         </h4>
-                        <p>{'Enter an invitation mail and press send. Press agaim "Add employee" to add more employees'}</p>
+                        <p>{'Enter your employees email and the system will automatically send them inviations. Keep pressing "Add employee" to add more employees. Then press "Send" to send invitation mails'}</p>
                     </div>
                     <br />
                 </div>
@@ -391,6 +435,20 @@ class EmplistView extends jx.Views.ReactView {
 
     }
 
+
+    send_emails() {
+
+        var mails = _.map(this.root.find('[type="email"]'), p => {
+
+            return $(p).val();
+        });
+
+        mails = _.filter(mails, (m: string) => {
+            return m.trim().length > 0
+        });
+
+        // create employees
+    }
 }
 
 
@@ -402,7 +460,7 @@ class EmailControl extends jx.Views.ReactView {
             <form className="text-clear smart-form">
                 <fieldset style={{ paddingTop:0 }}>
                     <label className="input">
-                        <i className="icon-append fa fa-times btn-icon"></i>
+                        <i className="icon-append fa fa-times btn-icon hover"></i>
                         <input type="email" name="email" placeholder="Enter an invitation email"/>
                     </label>
                 </fieldset>                
@@ -415,11 +473,17 @@ class EmailControl extends jx.Views.ReactView {
 
     componentDidMount() {
 
+        
+
         this.root.find('.btn-icon').click(e => {
 
             e.preventDefault();
 
-            alert('bingo');
+            this.root.slideUp({
+                complete: () => {
+                    this.root.remove()
+                }
+            });
         });
 
         //this.root.find('.glyphicon').css('margin-top', '5px');

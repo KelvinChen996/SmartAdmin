@@ -70,11 +70,11 @@ export class CompDivsTreeView extends Views.ReactView {
 
 
         var html =
-            <div style={{ minHeight: 350 }}>
+            <div style={{ minHeight: 350, marginTop:20 }}>
                 <button className="btn btn-primary btn-addnew">
                     <i className="fa fa-plus-circle" aria-hidden="true"></i> Add new division
-                </button> 
-                <hr/>
+                </button>
+                <hr style={{ marginTop:30 }}/>
                 <div className="tree-view">
                     <div className="dd">
                         <ol className="dd-list">
@@ -398,6 +398,10 @@ export class CompDivsTreeView extends Views.ReactView {
 }
 
 
+
+
+
+
 export interface CompDivsEditProps extends Views.ReactProps {
     mode?: string,
     id?: string
@@ -444,9 +448,9 @@ export class CompDivsEdit extends Views.ReactView {
                     <b.Row style={{ paddingTop: 30 }}>
                         <b.Col xs={12}>
                             <jx.controls.BigLabel label="Company division" inline={true} />
-                            <a href="#" className="text-primary pull-right view-mode btn-edit" onClick={(e) => { e.preventDefault(); that.enter_editmode() } } style={{ fontSize: 18, marginTop:5 }}><i className="fa fa-edit"></i> edit</a>
-                            <a href="#" className="text-danger pull-right edit-mode hidden btn-cancel" onClick={(e) => { e.preventDefault(); that.cancel_editmode() } } style={{ fontSize: 18, marginLeft: 20, marginTop: 5 }}><i className="fa fa-times"></i> cancel</a>
-                            <a href="#" className="text-primary pull-right edit-mode hidden btn-save" onClick={(e) => { e.preventDefault(); that.save() } } style={{ fontSize: 18, marginTop: 5 }}><i className="fa fa-check"></i> save</a>
+                            <button href="#" className="btn btn-primary pull-right view-mode btn-edit hidden" onClick={(e) => { e.preventDefault(); that.enter_editmode() } } style={{ marginTop: 5 }}><i className="fa fa-edit"></i> edit</button>
+                            <button href="#" className="pull-right btn btn-danger edit-mode btn-cancel" onClick={(e) => { e.preventDefault(); that.cancel_editmode() } } style={{ marginLeft: 10, marginTop: 5 }}><i className="fa fa-times"></i> cancel</button>
+                            <button href="#" className="pull-right btn btn-primary edit-mode btn-save" onClick={(e) => { e.preventDefault(); that.save() } } style={{ marginTop: 5 }}><i className="fa fa-check"></i> save</button>
                         </b.Col>                        
                     </b.Row>
 
@@ -455,17 +459,17 @@ export class CompDivsEdit extends Views.ReactView {
                     <b.FormGroup controlId="formControlsText">
                         <jx.controls.BigLabel label="Title" />
                         <b.FormControl type="text" data-bind="textInput:compdiv_title" style={{ height: 50, fontSize:20}}
-                            className="edit-mode hidden" id="compdiv_title" placeholder="Enter a title" />
-                        <p data-bind="text:compdiv_title" className="view-mode" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>                        
+                            className="edit-mode" id="compdiv_title" placeholder="Enter a title" />
+                        <p data-bind="text:compdiv_title" className="view-mode hidden" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>
                     </b.FormGroup>
 
                     <br/>
 
                     <b.FormGroup controlId="formControlsText">
                         <jx.controls.BigLabel label="Description" />
-                        <textarea rows={3} id="compdiv_descr" style={{ fontSize: 20 }}
-                            data-bind="textInput:compdiv_descr" className="custom-scroll edit-mode hidden form-control" />
-                        <p data-bind="text:compdiv_descr" className="view-mode" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>
+                        <textarea rows={3} id="compdiv_descr" style={{ fontSize: 20 }} placeholder="Enter a description"
+                            data-bind="textInput:compdiv_descr" className="custom-scroll edit-mode form-control" />
+                        <p data-bind="text:compdiv_descr" className="view-mode hidden" style={{ marginTop: 10, fontSize: 32, fontWeight: 100 }} ></p>
                     </b.FormGroup>
 
                     <br />
@@ -489,8 +493,36 @@ export class CompDivsEdit extends Views.ReactView {
     componentDidMount() {
 
         if (this.state.loading) {
-            this.load_data();
+
+            this.load_data().then(() => {
+
+                if (this.state.openmode === OpenMode.add) {
+                    this.enter_editmode();
+                }
+
+            });
         }                
+    }
+
+
+    componentDidUpdate() {
+
+        if (this.state.loading)
+        {
+            this.load_data();
+        } else {
+
+            if (this.state.openmode === OpenMode.add) {
+                this.enter_editmode();
+            }
+
+            if (this.props.id)
+            {
+                ko.cleanNode(this.root[0]);
+                ko.applyBindings(this.item, this.root[0]);
+            }
+        }
+
     }
 
 
@@ -502,17 +534,17 @@ export class CompDivsEdit extends Views.ReactView {
 
     exit_editmode() {
 
-        this.root.find('.view-mode').removeClass('hidden');
+        //this.root.find('.view-mode').removeClass('hidden');
 
-        this.root.find('.edit-mode').addClass('hidden');
+        //this.root.find('.edit-mode').addClass('hidden');
     }
 
 
     enter_editmode() {
 
-        this.root.find('.view-mode').addClass('hidden');
+        //this.root.find('.view-mode').addClass('hidden');
 
-        this.root.find('.edit-mode').removeClass('hidden');
+        //this.root.find('.edit-mode').removeClass('hidden');
     }
 
     
@@ -550,23 +582,14 @@ export class CompDivsEdit extends Views.ReactView {
     }
 
 
-    componentDidUpdate() {
-
-        if (this.state.loading) {
-            this.load_data();
-        } else {
-            if (this.props.id) {
-                ko.cleanNode(this.root[0]);
-                ko.applyBindings(this.item, this.root[0]);
-            }
-        }
-        
-    }
-
-
     save_div() {
 
         var obj = ko['mapping'].toJS(this.item);
+
+        if (!obj || !obj['compdiv_title']) {
+            toastr.error('Title not found');
+            return Q.reject(false);
+        }
 
         utils.spin(this.root);
 
@@ -605,6 +628,11 @@ export class CompDivsEdit extends Views.ReactView {
         obj['compdiv_title'] = this.root.find('#compdiv_title').val();
         obj['compdiv_descr'] = this.root.find('#compdiv_descr').val();
 
+        if (!obj || !obj['compdiv_title']) {
+            toastr.error('Title not found');
+            return Q.reject(false);
+        }
+
         utils.spin(this.root);
 
         var d = Q.defer();
@@ -638,6 +666,10 @@ export class CompDivsEdit extends Views.ReactView {
         var model = Backendless.Persistence.of('compdivs');
 
         var qry = new Backendless.DataQuery();
+
+        if (!this.props.id) {
+            return Q.resolve(false);
+        }
 
         qry.condition = "objectId = '{0}'".format(this.props.id);
 
