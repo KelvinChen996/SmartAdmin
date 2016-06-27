@@ -395,7 +395,8 @@ class EmplistView extends jx.Views.ReactView {
 
                         <jx.controls.BigLabel label="Employees" />
                         <br />
-                        <button type="button" className="btn btn-primary btn-add-emps" onClick={() => { this.add_mail_control() } }><i className="fa fa-user"></i> Add employees</button>
+                        <button type="button" className="btn btn-primary btn-all-emps" onClick={() => { } } style={{marginRight:5}}><i className="fa fa-users"></i> View all employees</button>
+                        <button type="button" className="btn btn-success btn-add-emps" onClick={() => { this.add_mail_control() } }><i className="fa fa-user-plus"></i> Add new employees</button>
                         <button className="btn btn-warning pull-right edit-mode hidden"><i className="fa fa-times" aria-hidden="true"></i> Cancel</button>
                         <button className="btn btn-primary pull-right edit-mode hidden" onClick={() => { this.send_emails() } } style={{ marginRight: 10 }}><i className="fa fa-envelope-o" aria-hidden="true"></i> Send</button>
                         

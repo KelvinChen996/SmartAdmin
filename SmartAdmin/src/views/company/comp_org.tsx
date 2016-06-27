@@ -40,7 +40,7 @@ export class CompOrg extends Views.ReactView {
         var html =
             <div className="col-lg-12">
 
-                <jx.controls.BigLabel label="Company divisions" />
+                <jx.controls.BigLabel label="Company organization" />
 
                 <br />
 

@@ -70,11 +70,16 @@ export class CompDivsTreeView extends Views.ReactView {
 
 
         var html =
-            <div style={{ minHeight: 350, marginTop:20 }}>
-                <button className="btn btn-primary btn-addnew">
+            <div style={{ minHeight: 350, marginTop: 20 }}>
+
+                <jx.controls.BigLabel label="Company divisions" inline={true} />
+                
+                <button className="btn btn-primary btn-addnew pull-right">
                     <i className="fa fa-plus-circle" aria-hidden="true"></i> Add new division
                 </button>
-                <hr style={{ marginTop:30 }}/>
+                
+                <hr style={{ marginTop: 30 }}/>
+
                 <div className="tree-view">
                     <div className="dd">
                         <ol className="dd-list">
@@ -318,7 +323,7 @@ export class CompDivsTreeView extends Views.ReactView {
                                 </span>
                                 <span className="fa fa-arrow-right pull-right text-danger hidden"></span>
                             </h4>
-                            <span className="text-muted"><small>{d['compdiv_descr']}</small></span>
+                            {/*<span className="text-muted"><small>{d['compdiv_descr']}</small></span>*/}
                             
                         </div>                        
                     </div>       
@@ -345,12 +350,11 @@ export class CompDivsTreeView extends Views.ReactView {
 
                     <div className="dd-handle dd-nodrag">
 
-                        <div className="">
-
-                                <span className="text-info"><strong>Departments</strong></span>
+                        <div>
+                                <h3 className="text-muted" style={{ display:'inline-block' }}>Departments</h3>
                             
-                                <span className="pull-right">
-                                    <a href="#" className="btn btn-info btn-xs btn-add-dept"><i className="fa fa-plus"> {"add new"}</i></a>
+                                <span className="pull-right" style={{ marginTop: 10 }}>
+                                    <a href="#" className="btn btn-success btn-add-dept"><i className="fa fa-plus"> {"Add new department"}</i></a>
                                 </span>
                                 
                             </div>    
@@ -371,7 +375,7 @@ export class CompDivsTreeView extends Views.ReactView {
                                             <span className="fa fa-arrow-right pull-right text-danger hidden"></span>
                                         </h4>
 
-                                        <span className="text-muted">{dep['compdept_descr']}</span>
+                                        {/*<span className="text-muted">{dep['compdept_descr']}</span>*/}
                                         
                                     </div>
                                     
